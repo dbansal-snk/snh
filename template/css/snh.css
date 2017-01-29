@@ -1,0 +1,36 @@
+.form-horizontal input {
+    text-transform: uppercase;
+}
+
+.addMedicine {
+    background-image: url("../images/icon_sprites.png");
+    background-position: 0 0;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    display: inline-block;
+    float: left;
+    height: 19px;
+    margin-right: 6px;
+    width: 20px;
+    margin-left: 112px;
+}
+
+.addMedicineText {
+    color: #f48024;
+    cursor: pointer;
+    height: 19px;
+    line-height: 19px;
+}
+
+
+.removeMedicine {
+    background-image: url("../images/icon_minus.gif");
+    cursor: pointer;
+    display: inline-block;
+    float: right;
+    height: 22px;
+    margin-right: 6px;
+    margin-top: 4px;
+    position: relative;
+    width: 20px;
+}

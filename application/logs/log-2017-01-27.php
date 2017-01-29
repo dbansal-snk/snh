@@ -1,0 +1,78 @@
+<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed'); ?>
+
+ERROR - 2017-01-27 15:06:47 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 15:06:51 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 15:06:51 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 15:06:53 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 15:11:53 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 15:12:48 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 15:13:16 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 15:13:26 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 15:14:35 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 15:16:29 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 15:17:17 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 15:17:17 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 15:17:20 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 15:27:00 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 15:27:00 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 15:27:02 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 15:28:17 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 15:28:17 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 15:28:19 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 15:28:27 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 15:28:27 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 15:28:28 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 15:28:40 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 15:28:40 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 15:28:42 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 15:29:12 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 15:29:12 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 15:29:17 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 15:30:18 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 15:30:18 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 15:30:57 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 15:30:57 --> SELECT *
+FROM (`medicine`)
+WHERE `medicine_id` =  '10'
+ERROR - 2017-01-27 15:31:37 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 15:31:37 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 15:32:28 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 15:32:30 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 15:32:32 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 15:32:32 --> >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+ERROR - 2017-01-27 15:32:32 --> SELECT *
+FROM (`medicine`)
+WHERE `medicine_id` =  '10'
+ERROR - 2017-01-27 15:32:41 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 15:32:41 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 15:32:43 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 15:32:43 --> >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+ERROR - 2017-01-27 15:32:43 --> SELECT *
+FROM (`medicine`)
+WHERE `medicine_id` =  '10'
+ERROR - 2017-01-27 15:33:34 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 15:34:07 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 15:34:07 --> >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+ERROR - 2017-01-27 15:34:07 --> UPDATE `medicine` SET `medicine_category_id` = '2', `description` = 'test', `price` = '1.2', `manufacturing_company` = 'test', `status` = 0, `retailer_name` = 'test', `quantity` = '1', `mrp` = '1', `medicine_expiry_date` = '01/04/2017', `batch` = '1', `discount` = '1', `vat` = '1', `free_item` = '2.3', `is_loose_item` = 0, `loose_item_quantity` = 0 WHERE `medicine_id` =  '10'
+ERROR - 2017-01-27 15:34:07 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 15:34:23 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 15:38:17 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 15:38:17 --> >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+ERROR - 2017-01-27 15:38:17 --> UPDATE `medicine` SET `medicine_category_id` = '2', `description` = 'test', `price` = '1.2', `manufacturing_company` = 'test', `status` = 0, `retailer_name` = 'test', `quantity` = '1', `mrp` = '1', `medicine_expiry_date` = '01/04/2017', `batch` = '1', `discount` = '1', `vat` = '1', `free_item` = '2.3', `is_loose_item` = 0, `loose_item_quantity` = 0 WHERE `medicine_id` =  '10'
+ERROR - 2017-01-27 15:38:17 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 15:38:19 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 15:53:25 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 15:58:29 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 15:58:29 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 16:26:02 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 16:26:07 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 16:26:08 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 16:26:16 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 16:26:21 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 16:26:21 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 17:00:25 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 17:00:57 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 17:01:01 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 17:01:05 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 17:03:03 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
+ERROR - 2017-01-27 17:04:23 --> Severity: 8192  --> mysql_pconnect(): The mysql extension is deprecated and will be removed in the future: use mysqli or PDO instead /var/www/html/hms/system/database/drivers/mysql/mysql_driver.php 91
