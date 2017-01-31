@@ -3,23 +3,24 @@ medicine = function() {
      
     function calculate_med_price()
     {
-        var totalSellingMedCount = $("div[id*='selling_med_detais']").length;
+        var totalSellingMedCount = $("[id*='selling_med_detais']").length;
         var totalAmount          = 0;
         for (var i = 1; i <= totalSellingMedCount; i++) {
             var medicine_id = $("#medicine_id" + i).val();
             if (medicine_id != '' && $.isNumeric(medicine_id) && medicine_id > 0) {
                 var mrp = medicine_price_details[medicine_id];
                 // if the loose item is being sold
-                if ($('#selling_loose_quantity' + i).is(":checked")) {
+                if ($('#selling_loose_quantity' + i).is(":checked") && loose_item_mrp[medicine_id] > 0) {
                     mrp = loose_item_mrp[medicine_id];
                 }
 
                 var quantity = $('#med_quantity' + i).val();
                 var amount   = quantity * mrp;
-                
+                amount       = amount.toFixed(2);
                 if ($.isNumeric(amount) == true) {
                     $('#med_amount' + i).val(amount);
-                    totalAmount = totalAmount + amount;
+                    totalAmount = parseFloat(totalAmount) + parseFloat(amount);
+                    totalAmount = totalAmount.toFixed(2);
                 } else {
                     $('#med_amount' + i).val(0);
                 }
@@ -28,6 +29,13 @@ medicine = function() {
         
         
         if ($.isNumeric(totalAmount) == true) {
+            var discount      =  $('#discount').val();
+            var totalDiscount = 0;
+            if ($.isNumeric(discount) == true && discount > 0) {
+                totalDiscount = ((totalAmount*discount)/100).toFixed(2);
+                totalAmount   = totalAmount - totalDiscount;
+            }
+            
             $('#total_amount').val(totalAmount);
         } else {
             $('#total_amount').val(0);
@@ -46,19 +54,29 @@ medicine = function() {
     
     function add_medicine_container()
     {
-        var labelCount = $("div[id*='selling_med_detais']").length + 1;
+        var labelCount = $("[id*='selling_med_detais']").length + 1;
+        // keep the medicine details count in the hidden parameter
+        $('#total_med_details').val(labelCount);
+        
+        
+        var seprator = $('<div>').attr({
+            class: 'seprator-dooted-lines'
+        });
+        
         // MEDICINE LIST ELEMENT
         var mouterDiv = $('<div>').attr({
             class: 'control-group',
             id: 'sold_med_details' + labelCount
         });
         
+        mouterDiv.append(seprator);
+        
         var mlabel = $('<label>').attr({
             class: 'control-label',
             id: 'selling_med_detais'
         }).appendTo(mouterDiv);
         
-        mlabel.html('Medicine' + labelCount);
+        mlabel.html('<span class="medicine_label">Medicine' + labelCount + '</span>');
         
         var minnerDiv = $('<div>').attr({
             class: 'controls'
@@ -96,7 +114,7 @@ medicine = function() {
             class: 'control-label'            
         }).appendTo(louterDiv);
         
-        llabel.html('Selling Loose Quantity' + labelCount);
+        llabel.html('<span class="loose_quant_label">Selling Loose Quantity' + labelCount + '</span>');
         
         var linnerDiv = $('<div>').attr({
             class: 'controls'
@@ -108,7 +126,7 @@ medicine = function() {
             type: 'checkbox',
             id: 'selling_loose_quantity' + labelCount,
             name: 'selling_loose_quantity' + labelCount,
-            onkeyup: 'medicine.calculate_med_price();'
+            onchange: 'medicine.calculate_med_price();'
         }).appendTo(linnerDiv);
         
         
@@ -122,7 +140,7 @@ medicine = function() {
             class: 'control-label'            
         }).appendTo(outerDiv);
         
-        label.html('Quantity' + labelCount);
+        label.html('<span class="quantity_label">Quantity' + labelCount + '</span>');
         
         var innerDiv = $('<div>').attr({
             class: 'controls'
@@ -149,14 +167,14 @@ medicine = function() {
             class: 'control-label'            
         }).appendTo(aouterDiv);
         
-        qlabel.html('Amount' + labelCount);
+        qlabel.html('<span class="amount_label">Amount' + labelCount + '</span>');
         
         var ainnerDiv = $('<div>').attr({
             class: 'controls'
         }).appendTo(aouterDiv);
         
         $('<input>').attr({
-            type: 'number',
+            type: 'text',
             id: 'med_amount' + labelCount,
             name: 'amount' + labelCount,
             readonly: 'readonly'
@@ -167,9 +185,39 @@ medicine = function() {
     }
     
     function remove_medicine_container(id)
-    {
+    {   
         $('*[id*=sold_med_details'+ id +']:visible').each(function() {
            $(this).remove();
+        });
+        
+        // keep the medicine details count in the hidden parameter
+        var labelCount = $("[id*='selling_med_detais']").length;
+        $('#total_med_details').val(labelCount);
+        
+        
+        // change the label of the medicine details which is being sold to patient
+        var medDetailCount = 2;
+        $('*[class*=medicine_label]:visible').each(function() {
+           $(this).html('Medicine' + medDetailCount);
+           medDetailCount++;
+        });
+        
+        medDetailCount = 2;
+        $('*[class*=loose_quant_label]:visible').each(function() {
+           $(this).html('Selling Loose Quantity' + medDetailCount);
+           medDetailCount++;
+        });
+        
+        medDetailCount = 2;
+        $('*[class*=quantity_label]:visible').each(function() {
+           $(this).html('Quantity' + medDetailCount);
+           medDetailCount++;
+        });
+        
+        medDetailCount = 2;
+        $('*[class*=amount_label]:visible').each(function() {
+           $(this).html('Amount' + medDetailCount);
+           medDetailCount++;
         });
     }
 

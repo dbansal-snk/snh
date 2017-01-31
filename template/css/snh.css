@@ -34,3 +34,10 @@
     position: relative;
     width: 20px;
 }
+
+.seprator-dooted-lines {
+    border-top: 5px dotted;
+    margin-bottom: 13px;
+    margin-left: 100px;
+    width: 330px;
+}
