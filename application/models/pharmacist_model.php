@@ -46,9 +46,24 @@ class Pharmacist_model extends CI_Model
     public function mark_obsolete_to_old_med_stock($medicine_cat_id)
     {
         if (!empty($medicine_id)) {
-            $data = array('is_obsolete' => 1);
+            $data = array('is_latest_stock' => 1);
             $this->db->where('medicine_category_id', $medicine_cat_id);
             $this->db->update($this->_medicine, $data);
         }
+    }
+    
+    public function get_medicine_revenue()
+    {
+        $this->db->select(array($this->_medicine_category . '.name', $this->_medicine . '.loose_item_quantity'));
+        $this->db->select('SUM(' . $this->_medicine . '.quantity) as total_stock');
+        $this->db->select('SUM(' . $this->_medicine_sale_details . '.amount) as total_amount');
+        $this->db->select('SUM(IF(' . $this->_medicine_sale_details . '.is_loose_sale = 0,' . $this->_medicine_sale_details . '.quantity, "0" )) as sold_stock', false);
+        $this->db->select('SUM(IF(' . $this->_medicine_sale_details . '.is_loose_sale = 1,' . $this->_medicine_sale_details . '.quantity, "0" )) as loose_sold_stock', false);
+        $this->db->join($this->_medicine, $this->_medicine . '.medicine_id = ' . $this->_medicine_category . '.medicine_category_id', 'LEFT');
+        $this->db->join($this->_medicine_sale_details, $this->_medicine_sale_details . '.medicine_id = ' . $this->_medicine_category . ' .medicine_category_id', 'LEFT');
+        $this->db->group_by($this->_medicine_sale_details . '.medicine_id');
+        $data = $this->db->get($this->_medicine_category)->result_array();
+        
+        return $data;
     }
 }
