@@ -85,11 +85,13 @@ medicine = function() {
         $('<select>').attr({
             id: 'medicine_id' + labelCount,
             name: 'medicine_id' + labelCount,
-            onkeyup: 'medicine.calculate_med_price();'
+            onchange: 'medicine.calculate_med_price(), medicine.can_sell_loose_item(' + labelCount +');',
         }).appendTo(minnerDiv);
         
         mouterDiv.appendTo('#med_details_container');
         
+         $('<option>').val(0).text('--Select Medicine--').appendTo('#medicine_id' + labelCount);
+         
         $.each (medicineList, function( key, value ) {
             if ('undefined' != typeof value && '' != value) {
                 $('<option>').val(key).text(value).appendTo('#medicine_id' + labelCount);
@@ -106,12 +108,12 @@ medicine = function() {
         
         // LOOSE QUANTITY ELEMENT
         var louterDiv = $('<div>').attr({
-            class: 'control-group',
+            class: 'control-group , loose_med_option' + labelCount,
             id: 'sold_med_details' + labelCount
         });
         
         var llabel = $('<label>').attr({
-            class: 'control-label'            
+            class: 'control-label'
         }).appendTo(louterDiv);
         
         llabel.html('<span class="loose_quant_label">Selling Loose Quantity' + labelCount + '</span>');
@@ -220,6 +222,35 @@ medicine = function() {
            medDetailCount++;
         });
     }
+    
+    function can_sell_loose_item(getPosition) {
+        var looseQuantityContainer = 'loose_quantity_element' + getPosition;
+        var getMedicineId = $('#medicine_id' + getPosition).val();
+        
+        if ('undefined' != typeof medicine_loose_item_info[getMedicineId] && 0 == medicine_loose_item_info[getMedicineId]) {
+            $('#' + looseQuantityContainer).hide();
+            $('.loose_med_option' + getPosition).hide();
+        } else {
+            $('#' + looseQuantityContainer).show();
+            $('.loose_med_option' + getPosition).show();
+        }
+    }
+    
+    function validate_medicine_sale_form() {
+        var totalSellingMedCount = $("[id*='selling_med_detais']").length;
+        var erroMessage = '';
+        for (var i=1; i<=totalSellingMedCount; i++) {
+            var selectedMedValue = $('#medicine_id' + i).val();
+            if (selectedMedValue == 0) {
+                erroMessage += 'Please select Medicine' + i + '\n';
+            }
+        }
+        
+        if ('' != erroMessage) {
+            alert(erroMessage);
+            return false;
+        }
+    }
 
     return {
         calculate_med_price : function() {
@@ -236,6 +267,14 @@ medicine = function() {
         
         remove_medicine_container : function(id) {
             remove_medicine_container(id);
+        },
+        
+        can_sell_loose_item : function(id) {
+            can_sell_loose_item(id);
+        },
+        
+        validate_medicine_sale_form : function() {
+            validate_medicine_sale_form();
         }
     }
 }();

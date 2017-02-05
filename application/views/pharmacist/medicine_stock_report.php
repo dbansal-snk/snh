@@ -12,6 +12,7 @@
 	<div class="box-content padded">
     	<div class="tab-content">            
             <div id="report">
+                <div style="margin-left: 400px;"><?php echo get_phrase('Total_Medicine_Revenue');?>: <?php echo !empty($all_med_revenue[0]['total_amount']) ? $all_med_revenue[0]['total_amount'] : 0; ?></div>
                 <table cellpadding="0" cellspacing="0" border="0" class="dTable responsive">
                     <thead>
                         <tr>
@@ -37,7 +38,7 @@
                                 }
                                 
                             ?>
-                            <td><?php echo $sold_stock; ?></td>
+                            <td><?php echo $row['total_stock'] - $sold_stock; ?></td>
                             <td><?php echo !empty($row['total_amount']) ? $row['total_amount'] : 0;?></td>
                         </tr>
                         <?php } ?>
