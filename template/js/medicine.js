@@ -48,6 +48,7 @@ medicine = function() {
             $('#loose_item_details').show();
         } else {
             $('#loose_item_details').hide();
+            $('#loose_item_quantity').val('');
         }
         
     }
@@ -251,6 +252,14 @@ medicine = function() {
             return false;
         }
     }
+    
+    function validate_medicine_stock_form()
+    {
+        if ($('#is_loose_item').is(":checked") && $('#loose_item_quantity').val() <= 0) {
+            alert('Please mention the loose item quantity');
+            return false;
+        }
+    }
 
     return {
         calculate_med_price : function() {
@@ -275,6 +284,10 @@ medicine = function() {
         
         validate_medicine_sale_form : function() {
             validate_medicine_sale_form();
+        },
+        
+        validate_medicine_stock_form : function() {
+            return validate_medicine_stock_form();
         }
     }
 }();

@@ -9,15 +9,18 @@ class Pharmacist_model extends CI_Model
     private $_medicine_category;
     private $_medicine_stock;
     private $_table_vendors;
+    private $_table_manufacture_company;
+    const STATUS_ACTIVE = 'ACTIVE';
             
 	function __construct()
     {
 		parent::__construct();
-        $this->_medicine_sale           = 'medicine_sale';
-        $this->_medicine_sale_details   = 'medicine_sale_details';
-        $this->_medicine_category       = 'medicine_category';
-        $this->_medicine_stock          = 'medicine_stock';
-        $this->_table_vendors           = 'vendors';
+        $this->_medicine_sale               = 'medicine_sale';
+        $this->_medicine_sale_details       = 'medicine_sale_details';
+        $this->_medicine_category           = 'medicine_category';
+        $this->_medicine_stock              = 'medicine_stock';
+        $this->_table_vendors               = 'vendors';
+        $this->_table_manufacture_company   = 'manufacture_company';
 	}
     
     public function get_sold_medicine_details()
@@ -58,13 +61,21 @@ class Pharmacist_model extends CI_Model
     {
         $this->db->select(array($this->_medicine_category . '.name', $this->_medicine_stock . '.loose_item_quantity'));
         $this->db->select('SUM(' . $this->_medicine_stock . '.quantity) as total_stock');
-        $this->db->select('SUM(' . $this->_medicine_sale_details . '.amount) as total_amount');
-        $this->db->select('SUM(IF(' . $this->_medicine_sale_details . '.is_loose_sale = 0,' . $this->_medicine_sale_details . '.quantity, "0" )) as sold_stock', false);
-        $this->db->select('SUM(IF(' . $this->_medicine_sale_details . '.is_loose_sale = 1,' . $this->_medicine_sale_details . '.quantity, "0" )) as loose_sold_stock', false);
+        $this->db->select('SUM(' . $this->_medicine_stock . '.free_item) as total_free_item_stock');
+        $this->db->select(array($this->_medicine_category . '.medicine_category_id'));
         $this->db->join($this->_medicine_stock, $this->_medicine_stock . '.medicine_category_id = ' . $this->_medicine_category . '.medicine_category_id', 'LEFT');
-        $this->db->join($this->_medicine_sale_details, $this->_medicine_sale_details . '.medicine_sale_id = ' . $this->_medicine_stock . ' .id', 'LEFT');
         $this->db->group_by($this->_medicine_category . '.medicine_category_id');
         $data = $this->db->get($this->_medicine_category)->result_array();
+        
+        return $data;
+    }
+    
+    public function get_sold_stock_of_medicine()
+    {
+        $this->db->select('SUM(quantity) as remaining_stock');
+        $this->db->select(array('medicine_id'));
+        $this->db->group_by($this->_medicine_sale_details . '.medicine_id');
+        $data = $this->db->get($this->_medicine_sale_details)->result_array();
         
         return $data;
     }
@@ -131,6 +142,44 @@ class Pharmacist_model extends CI_Model
             
             $this->db->where('medicine_sale_id', $id);
             $this->db->delete($this->_medicine_sale_details);
+        }
+    }
+    
+    
+     public function get_manufacture_company_list($id = null, $show_active_companies = false) {
+        if (!empty($id)) {
+            $this->db->where('id', $id);
+        }
+        
+        if (!empty($show_active_companies)) {
+            $this->db->where('status', self::STATUS_ACTIVE);
+        }
+        
+        $this->db->order_by('name', 'asc');
+        $data = $this->db->get($this->_table_manufacture_company)->result_array();
+        
+        return $data;
+    
+    }
+    
+    public function add_manufacture_company($data)
+    {
+        $this->db->insert($this->_table_manufacture_company, $data);
+    }
+    
+    public function delete_manufacture_company($id)
+    {
+        if (!empty($id)) {
+            $this->db->where('id', $id);
+            $this->db->delete($this->_table_manufacture_company);
+        }
+    }
+    
+    public function update_manufacture_company($id, $data)
+    {
+        if (!empty($id)) {
+            $this->db->where('id', $id);
+            $this->db->update($this->_table_manufacture_company, $data);
         }
     }
 }
