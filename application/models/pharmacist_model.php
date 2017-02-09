@@ -182,4 +182,13 @@ class Pharmacist_model extends CI_Model
             $this->db->update($this->_table_manufacture_company, $data);
         }
     }
+    
+    public function get_medicine_list()
+    {
+        $this->db->select('IF(status = "IN_STOCK", "In Stock", IF(status = "OUT_STOCK", "Out of Stock", "Not in Stock")) as status', false);
+        $this->db->select(array('name', 'description', 'medicine_category_id'));
+        $data = $this->db->get($this->_medicine_category)->result_array();
+        
+        return $data;
+    }
 }

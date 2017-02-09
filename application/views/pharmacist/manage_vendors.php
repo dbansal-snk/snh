@@ -85,7 +85,7 @@
             <!----TABLE LISTING STARTS--->
 
             <div class="tab-pane box <?php if(!isset($edit_profile))echo 'active';?>" id="list">
-                <table cellpadding="0" cellspacing="0" border="0" class="dTable responsive">
+                <table id="vendors_list" class="display" cellspacing="0" width="100%" class="dTable responsive">
                 	<thead>
                 		<tr>
                     		<th><div><?php echo get_phrase('Name');?></div></th>
@@ -178,3 +178,12 @@
 	</div>
 
 </div>
+<script>
+$(document).ready( function () {
+    $('#vendors_list').DataTable({
+        "scrollY":        "800px",
+        "scrollCollapse": true,
+        "paging":         false
+    });
+} );
+</script>

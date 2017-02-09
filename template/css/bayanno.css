@@ -254,7 +254,7 @@ body {
 
 	line-height:20px;
 
-	color:#333333;
+	/*color:#333333;*/
 
 	background-color:white
 
@@ -11202,7 +11202,7 @@ body {
 
 	min-height:100%;
 
-	color:#707070;
+	/*color:#707070;*/
 
 	overflow-x:hidden
 
@@ -23529,33 +23529,7 @@ table.dataTable thead tr {
 
 }
 
-table.dataTable thead tr th:first-child {
 
-	border-left:none
-
-}
-
-table.dataTable thead tr:first-child {
-
-	margin:0;
-
-	padding:0;
-
-	border-top:none
-
-}
-
-table.dataTable tr {
-
-	border-top:1px solid #eaebef
-
-}
-
-table.dataTable tr.even {
-
-	background-color:#F3F4F8
-
-}
 
 .dataTables_wrapper {
 
@@ -23967,13 +23941,13 @@ table.dataTable tr.even {
 
 .sorting>div:after {
 
-	content:"\f0dc"
+	/*content:"\f0dc"*/
 
 }
 
 .sorting_asc>div:after {
 
-	content:"\f0de";
+	/*content:"\f0de";*/
 
 	top:7px
 
@@ -23981,7 +23955,7 @@ table.dataTable tr.even {
 
 .sorting_desc>div:after {
 
-	content:"\f0dd";
+	/*content:"\f0dd";*/
 
 	top:1px
 

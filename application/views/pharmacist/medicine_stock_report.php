@@ -13,7 +13,7 @@
     	<div class="tab-content">            
             <div id="report">
                 <div style="margin-left: 400px;"><?php echo get_phrase('Total_Medicine_Revenue');?>: <?php echo !empty($all_med_revenue[0]['total_amount']) ? $all_med_revenue[0]['total_amount'] : 0; ?></div>
-                <table cellpadding="0" cellspacing="0" border="0" class="dTable responsive">
+                <table id="stock_report_list" class="display" cellspacing="0" width="100%"  class="dTable responsive">
                     <thead>
                         <tr>
                             <th><div><?php echo get_phrase('Medicine');?></div></th>
@@ -44,3 +44,13 @@
         </div>
     </div>
 </div>
+
+<script>
+$(document).ready( function () {
+    $('#stock_report_list').DataTable({
+        "scrollY":        "800px",
+        "scrollCollapse": true,
+        "paging":         false
+    });
+} );
+</script>
