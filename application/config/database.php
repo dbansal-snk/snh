@@ -49,9 +49,6 @@ $active_group = 'default';
 $active_record = TRUE;
 /**/
 $db['default']['hostname'] = 'localhost';
-//$db['default']['username'] = 'snkindia_hos';
-//$db['default']['password'] = 'tVz5}VQn)tdR';
-//$db['default']['database'] = 'snkindia_hospital';
 $db['default']['username'] = 'root';
 $db['default']['password'] = 'deepak';
 $db['default']['database'] = 'hospital_hmssell';

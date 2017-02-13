@@ -17,6 +17,7 @@
                     <thead>
                         <tr>
                             <th><div><?php echo get_phrase('Medicine');?></div></th>
+                            <th><div>M.R.P</div></th>
                             <th><div><?php echo get_phrase('Total_Stock');?></div></th>
                             <th><div><?php echo get_phrase('Remaining_Stock');?></div></th>
                             <th><div><?php echo get_phrase('Total_Revenue');?></div></th>
@@ -28,6 +29,7 @@
                         foreach ($data as $row) {?>
                         <tr>
                             <td><?php echo $row['name'];?></td>
+                            <td><?php echo $row['mrp'];?></td>
                             <td><?php 
                             $total_stock = !empty($row['total_stock']) ? $row['total_stock'] : 0;
                             $total_stock += !empty($row['total_free_item_stock']) ? $row['total_free_item_stock'] : 0;

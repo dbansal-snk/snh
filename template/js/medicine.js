@@ -1,5 +1,9 @@
 medicine = function() {
 
+    var _batch_list_url      = 'index.php?pharmacist/get_medicine_batch_list';
+    var _med_distributor_url = 'index.php?pharmacist/get_med_distributor_details';
+    var _sold_to_patient_url = 'index.php?pharmacist/sold_to_patient';
+    var _generate_bill_url   = 'index.php?pharmacist/generate_medicine_bill';
      
     function calculate_med_price()
     {
@@ -86,7 +90,7 @@ medicine = function() {
         $('<select>').attr({
             id: 'medicine_id' + labelCount,
             name: 'medicine_id' + labelCount,
-            onchange: 'medicine.calculate_med_price(), medicine.can_sell_loose_item(' + labelCount +');',
+            onchange: 'medicine.calculate_med_price(), medicine.can_sell_loose_item(' + labelCount +'), medicine.getMedicineBatchList(' + labelCount +');',
         }).appendTo(minnerDiv);
         
         mouterDiv.appendTo('#med_details_container');
@@ -98,6 +102,30 @@ medicine = function() {
                 $('<option>').val(key).text(value).appendTo('#medicine_id' + labelCount);
             }
         });
+        
+        // BATCH LIST ELEMENT
+        var bOuterDiv = $('<div>').attr({
+            class: 'control-group',
+            id: 'sold_med_details' + labelCount
+        });
+        
+        var bLabel = $('<label>').attr({
+            class: 'control-label'            
+        }).appendTo(bOuterDiv);
+        
+        bLabel.html('<span class="batch_label">Batch' + labelCount + '</span>');
+        
+        var bInnerDiv = $('<div>').attr({
+            class: 'controls'
+        }).appendTo(bOuterDiv);
+        
+        bOuterDiv.appendTo('#med_details_container');
+        
+        $('<select>').attr({
+            id: 'batch_id' + labelCount,
+            name: 'batch_id' + labelCount
+        }).appendTo(bInnerDiv);
+      
         
         // OPTION TO REMOVE DETAILS
         $('<div>').attr({
@@ -250,14 +278,141 @@ medicine = function() {
         if ('' != erroMessage) {
             alert(erroMessage);
             return false;
+        } else {
+            save_prescribed_details();
         }
     }
     
     function validate_medicine_stock_form()
     {
+        var errorMessage = '';
+        
+        if ($('#medicine_id').val() == 0) {
+            errorMessage += 'Please select the medicine' + '\n';
+        }
+        
+        if ($('#manufacture_company_id').val() == 0) {
+            errorMessage += 'Please select the manufacturing company' + '\n';
+        }
+        
+        if ($('#vendor_id').val() == 0) {
+            errorMessage += 'Please select the vendor name' + '\n';
+        }
+        
         if ($('#is_loose_item').is(":checked") && $('#loose_item_quantity').val() <= 0) {
-            alert('Please mention the loose item quantity');
+            errorMessage += 'Please mention the loose item quantity' + '\n';
+        }
+
+        if (errorMessage != '') {
+            alert(errorMessage);
             return false;
+        }
+    }
+    
+    function save_prescribed_details()
+    {
+        var formDetails = $('#med_prescribed_form').serializeArray();
+        
+        $.ajax({
+            type: 'POST',
+            url: _sold_to_patient_url,
+            data: formDetails,
+            success: function(response)
+            {
+                if ('undefined' != typeof response.content.error && true == response.content.error) {
+                    alert(response.content.message);
+                }
+            }
+        });
+    }
+    
+    function generate_medicine_bill(id)
+    {
+        if ('undefined' != typeof id && '' != id && null != id) {
+            $.ajax({
+                type: 'POST',
+                url: _generate_bill_url,
+                data: {'medicine_sale_id': id},
+                success: function(response)
+                {
+                    var popupWin = window.open('', '_blank', 'width=1000,height=1000');
+                    popupWin.document.open();
+                    popupWin.document.write(response.content);
+//                    popupWin.document.close();
+//                    window.print();
+                }
+            });
+
+//            window.print();
+//            document.body.innerHTML = id;
+        }
+    }
+    
+    function get_medicine_batch_list(medicineOrder)
+    {
+        var medicineId = $('#medicine_id' + medicineOrder).val();
+        $('#batch_id' + medicineOrder).empty();
+        if (medicineId > 0) {
+            var postdata = {};
+            postdata['medicine_id'] = medicineId;
+            
+            $.ajax({
+                type: 'POST',
+                url: _batch_list_url,
+                data: postdata,
+                success: function(response)
+                {
+                    if ('undefined' != typeof response.content && '' != response.content) {
+                        $.each(response.content, function( index, value ) {
+                            var newOption = $('<option>');
+                            newOption.attr('value',value.batch).text(value.batch);
+                            $('#batch_id' + medicineOrder).append(newOption);
+                        });
+                    }
+                }
+            });
+        }
+    }
+    
+    function get_med_distributor_details()
+    {
+        var medicineId = $('#medicine_id').val();
+        $('#manufacture_company_id option:not(:first)').remove();
+        $('#vendor_id option:not(:first)').remove();
+        
+        if (medicineId > 0) {
+            var postdata            = {};
+            postdata['medicine_id'] = medicineId;
+            
+            $.ajax({
+                type: 'POST',
+                url: _med_distributor_url,
+                data: postdata,
+                success: function(response)
+                {
+                    if ('undefined' != typeof response.content && '' != response.content) {
+                        if ('undefined' != typeof response.content.manufacture_list && '' != response.content.manufacture_list) {
+                            $.each(response.content.manufacture_list, function( index, value ) {
+                                if (value.id > 0) {
+                                    var newOption = $('<option>');
+                                    newOption.attr('value',value.id).text(value.name);
+                                    $('#manufacture_company_id').append(newOption);
+                                }
+                            });
+                        }
+                    
+                        if ('undefined' != typeof response.content.vendor_list && '' != response.content.vendor_list) {
+                            $.each(response.content.vendor_list, function( index, value ) {
+                                if (value.id > 0) {
+                                    var newOption = $('<option>');
+                                    newOption.attr('value',value.id).text(value.name);
+                                    $('#vendor_id').append(newOption);
+                                }
+                            });
+                        }
+                    }
+                }
+            });
         }
     }
 
@@ -288,6 +443,22 @@ medicine = function() {
         
         validate_medicine_stock_form : function() {
             return validate_medicine_stock_form();
+        },
+        
+        generate_medicine_bill : function(id) {
+            generate_medicine_bill(id);
+        },
+        
+        getMedicineBatchList : function(medicineOrder) {
+            get_medicine_batch_list(medicineOrder);
+        },
+        
+        get_med_distributor_details: function() {
+            get_med_distributor_details();
+        },
+        
+        printPage: function() {
+            window.print();
         }
     }
 }();
