@@ -46,7 +46,7 @@
 
 <div id="Container">
 
-
+<!--
 <div id="TopRow">
 
 <ul>
@@ -54,12 +54,12 @@
 <li> Retail Invoice/Cash Memo</li>
 <li> TIN No. - 7260261259</li>
 </ul>
-</div>
+</div>-->
 <div style="clear:both"></div>
 <!--Second Row STarts-->
 <div id="SecondRow">
 	<h1>Satnarayan Hospital</h1>
-	<h4>U-1/78, Budh Vihar,pooth kalan Delhi - 110042</h4>
+	<h4>Village Pooth Kalan, Budh Vihar, Delhi - 110086</h4>
 
 </div>
 <!--3rd Row STarts-->
@@ -70,7 +70,7 @@
     <td>
     <ul>
 	<li>Cash Memo No.:</li>
-    <li>S0 - 74529</li>
+    <li><?php echo !empty($content[0]['cash_memo_no']) ? $content[0]['cash_memo_no'] : 0; ?></li>
 	</ul>
 </td>
     <td> <ul>
@@ -88,23 +88,10 @@
 </td>
     <td> <ul>
 	<li>Rx by Doctor:</li>
-    <li>Dr. Ashish Bansal</li>
+    <li>Dr. A.K. Bansal</li>
 	</ul></td>
   </tr>
   
-   <tr>
-    <td>
-    <ul>
-	<li>Address:</li>
-    <li>S0 - 74529</li>
-	</ul>
-</td>
-    <td> <ul>
-	<li>C.R. No.:</li>
-    <li>CS</li>
-	</ul></td>
-  </tr>
- 
 </table>
 
 </div>

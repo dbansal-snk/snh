@@ -261,4 +261,13 @@ class Pharmacist_model extends CI_Model
         
         return $data;
     }
+    
+    public function update_medicine_sale_cash_memo_no($sale_id, $cash_memo_no)
+    {
+        if (!empty($sale_id) && !empty($cash_memo_no)) {
+            $data = array('cash_memo_no' => $cash_memo_no);
+            $this->db->where('id', $sale_id);
+            $this->db->update($this->_medicine_sale, $data);
+        }
+    }
 }

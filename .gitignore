@@ -2,3 +2,4 @@
 database/
 application/logs/*
 nbproject/private/private.xml
+/nbproject/private/
