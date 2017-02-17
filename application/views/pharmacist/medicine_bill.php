@@ -102,12 +102,12 @@
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
-    <th width="10%">Sr.</th>
-    <th width="10%">Qty.</th>
-    <th width="25%">Description</th>
+    <th width="5%">Sr.</th>
+    <th width="23%">Medicine</th>
+    <th width="28%">Qty.</th>
     <th width="15%">Batch</th>
-    <th width="10%">Rate</th>
-    <th width="10%">Amount</th>
+    <th width="20%">M.R.P</th>
+    <th width="20%">Amount</th>
   </tr>
  
 </table>
@@ -126,12 +126,12 @@
     if (is_array($content) && count($content) > 0) {
         foreach ($content as $row) { ?>
         <tr>
-            <td width="10%"><?php echo $sr_no; ?></td>
-            <td width="10%"><?php echo !empty($row['quantity']) ? $row['quantity'] : 0; ?></td>
-            <td width="25%"></td>
+            <td width="5%"><?php echo $sr_no; ?></td>
+            <td width="20%"><?php echo !empty($row['name']) ? $row['name'] : 0; ?></td>
+            <td width="5%"><?php echo !empty($row['quantity']) ? $row['quantity'] : 0; ?></td>
             <td width="15%"><?php echo !empty($row['batch']) ? $row['batch'] : ''; ?></td>
-            <td width="10%"><?php echo !empty($row['mrp']) ? $row['mrp'] : 0; ?></td>
-            <td width="10%"><?php echo !empty($row['amount']) ? $row['amount'] : 0; ?></td>
+            <td width="20%"><?php echo !empty($row['mrp']) ? $row['mrp'] : 0; ?></td>
+            <td width="20%"><?php echo !empty($row['amount']) ? $row['amount'] : 0; ?></td>
       </tr>
     <?php
         $sr_no++;

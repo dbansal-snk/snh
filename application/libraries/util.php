@@ -9,7 +9,7 @@ class Util
         $this->CI = & get_instance();
     }
     
-    function snh_date_format($date, $format = 'Y-m-d h:i:s')
+    static function snh_date_format($date, $format = 'Y-m-d h:i:s')
     {
         $output = null;
         if (!empty($date)) {
