@@ -21,6 +21,7 @@ if ( ! function_exists('get_medicine_mrp')) {
 
         $CI->db->select(array('name', 'medicine_category_id'));
         $CI->db->where('status', 'IN_STOCK');
+        $CI->db->order_by('name', 'asc');
 		$data = $CI->db->get('medicine_category')->result_array();
         return $data;
 	}
@@ -32,6 +33,7 @@ if ( ! function_exists('get_medicine_mrp')) {
 
         $CI->db->select(array('name', 'id'));
         $CI->db->where('status', 'ACTIVE');
+        $CI->db->order_by('name', 'asc');
 		$data = $CI->db->get('vendors')->result_array();
         return $data;
 	}
