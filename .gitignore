@@ -1,7 +1,8 @@
 /.project
 database/
 application/logs/*
+
 nbproject/private/private.xml
 /nbproject/private/
 
-application/config/database.php
+

@@ -322,7 +322,7 @@ medicine = function() {
                 if ('undefined' != typeof response.content.error && true == response.content.error) {
                     alert(response.content.message);
                 } else {
-                    window.location.href = '/index.php?pharmacist/manage_prescription';
+                    window.location.href = 'index.php?pharmacist/manage_prescription';
                 }
             }
         });

@@ -51,7 +51,7 @@ $active_record = TRUE;
 $db['default']['hostname'] = 'localhost';
 $db['default']['username'] = 'root';
 $db['default']['password'] = 'deepak';
-$db['default']['database'] = 'snkindia_hospital_20170217';
+$db['default']['database'] = 'snkindia_hospital_20170219';
 
 
 $db['default']['dbdriver'] = 'mysqli';

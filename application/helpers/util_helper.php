@@ -10,7 +10,7 @@ if ( ! function_exists('get_medicine_mrp')) {
         $CI->db->select(array('mrp', 'medicine_category_id', 'is_loose_item'));
         $CI->db->where('is_latest_stock', 1);
         $data = $CI->db->get('medicine_stock')->result_array();
-        log_message('error', $CI->db->last_query());
+        
         return $data;
 	}
 
@@ -46,6 +46,17 @@ if ( ! function_exists('get_medicine_mrp')) {
         $CI->db->select(array('name', 'id'));
         $CI->db->where('status', 'ACTIVE');
 		$data = $CI->db->get('manufacture_company')->result_array();
+        return $data;
+	}
+    
+    function get_all_medicine_list() {
+
+		$CI	=&	get_instance();
+		$CI->load->database();
+
+        $CI->db->select(array('name', 'medicine_category_id'));
+        $CI->db->order_by('name', 'asc');
+		$data = $CI->db->get('medicine_category')->result_array();
         return $data;
 	}
 }
