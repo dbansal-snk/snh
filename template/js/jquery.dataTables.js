@@ -5259,7 +5259,9 @@
 	
 		$.each( _fnGetUniqueThs( settings, headerCopy ), function ( i, el ) {
 			idx = _fnVisibleToColumnIndex( settings, i );
-			el.style.width = settings.aoColumns[idx].sWidth;
+            if(settings.aoColumns[idx]){
+                el.style.width = settings.aoColumns[idx].sWidth;
+        }
 		} );
 	
 		if ( footer ) {

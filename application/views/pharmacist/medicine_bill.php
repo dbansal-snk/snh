@@ -75,7 +75,12 @@
 </td>
     <td> <ul>
 	<li>Date:</li>
-    <li><?php echo date('d/m/Y') ?></li>
+    <?php
+        $selling_date = !empty($content[0]['medicine_sold_date']) ? $content[0]['medicine_sold_date'] : '';
+        $date         = new DateTime($selling_date);
+        $date_to_show = $date->format('d-m-Y');
+    ?>
+    <li><?php echo $date_to_show; ?></li>
 	</ul></td>
   </tr>
   
@@ -103,9 +108,10 @@
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <th width="5%">Sr.</th>
-    <th width="23%">Medicine</th>
-    <th width="28%">Qty.</th>
-    <th width="15%">Batch</th>
+    <th width="25%">Medicine</th>
+    <th width="19%">Qty.</th>
+    <th width="19%">Batch</th>
+    <th width="13%">Expiry Date</th>
     <th width="20%">M.R.P</th>
     <th width="20%">Amount</th>
   </tr>
@@ -127,9 +133,15 @@
         foreach ($content as $row) { ?>
         <tr>
             <td width="5%"><?php echo $sr_no; ?></td>
-            <td width="20%"><?php echo !empty($row['name']) ? $row['name'] : 0; ?></td>
-            <td width="5%"><?php echo !empty($row['quantity']) ? $row['quantity'] : 0; ?></td>
+            <td width="17%"><?php echo !empty($row['name']) ? $row['name'] : 0; ?></td>
+            <td width="24%"><?php echo !empty($row['quantity']) ? $row['quantity'] : 0; ?></td>
             <td width="15%"><?php echo !empty($row['batch']) ? $row['batch'] : ''; ?></td>
+            <?php 
+            $expiry_date      = !empty($content[0]['medicine_expiry_date']) ? $content[0]['medicine_expiry_date'] : '';
+            $get_date         = new DateTime($expiry_date);
+            $display_exp_date = $get_date->format('d-m-Y');
+            ?>
+            <td width="14%"><?php echo $display_exp_date; ?></td>
             <td width="20%"><?php echo !empty($row['mrp']) ? $row['mrp'] : 0; ?></td>
             <td width="20%"><?php echo !empty($row['amount']) ? $row['amount'] : 0; ?></td>
       </tr>
@@ -145,6 +157,7 @@
         <td width="25%"></td>
         <td width="15%"></td>
         <td width="10%"></td>
+        <td width="10%"></td>
         <td width="10%"></strong></td>
     </tr>
     
@@ -154,7 +167,8 @@
         <td width="25%"></td>
         <td width="15%"></td>
         <td width="10%"></td>
-        <td width="10%"></strong></td>
+        <td width="10%">Discount:</td>
+        <td width="10%"></strong><?php echo !empty($content[0]['discount']) ? number_format($content[0]['discount'], 2) : 0; ?></td>
     </tr>
     
     <tr>
@@ -162,6 +176,7 @@
         <td width="10%"></td>
         <td width="25%"></td>
         <td width="15%"></td>
+        <td width="10%"></td>
         <td width="10%"><strong>Total Amount:</strong></td>
         <td width="10%"><strong><?php echo !empty($content[0]['total_amount']) ? number_format($content[0]['total_amount'], 2) : 0; ?></strong></td>
     </tr>

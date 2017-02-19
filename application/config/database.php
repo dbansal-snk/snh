@@ -54,7 +54,7 @@ $db['default']['password'] = 'deepak';
 $db['default']['database'] = 'snkindia_hospital_20170217';
 
 
-$db['default']['dbdriver'] = 'mysql';
+$db['default']['dbdriver'] = 'mysqli';
 $db['default']['dbprefix'] = '';
 $db['default']['pconnect'] = TRUE;
 $db['default']['db_debug'] = TRUE;

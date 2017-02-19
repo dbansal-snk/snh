@@ -270,4 +270,42 @@ class Pharmacist_model extends CI_Model
             $this->db->update($this->_medicine_sale, $data);
         }
     }
+    
+    public function vendor_stock_report($pagination)
+    {
+        $this->db->select(array($this->_medicine_category . '.name', $this->_medicine_stock . '.price'));
+        $this->db->select('SUM(' . $this->_medicine_sale_details . '.quantity' . ') as sold_quantity');
+        $this->db->select('SUM(' . $this->_medicine_sale_details . '.amount' . ') as revenue');
+        $this->db->select('SUM(' . $this->_medicine_stock . '.quantity' . ') as total_stock');
+        $this->db->select('SUM(' . $this->_medicine_stock . '.loose_item_quantity' . ') as loose_item_quantity');
+        $this->db->join($this->_medicine_stock, $this->_medicine_stock . '.batch = ' . $this->_medicine_sale_details . '.batch', 'INNER');
+        $this->db->join($this->_table_vendors, $this->_medicine_stock . '.vendor_id = ' . $this->_table_vendors . '.id', 'INNER');
+        $this->db->join($this->_medicine_category, $this->_medicine_sale_details . '.medicine_id = ' . $this->_medicine_category . '.medicine_category_id', 'INNER');
+        $this->db->where($this->_table_vendors . '.id', 10);
+        $this->db->group_by($this->_medicine_sale_details . '.medicine_id');
+        $this->db->order_by($this->_medicine_category . '.name', 'asc');
+        $this->db->limit($pagination['offset'], $pagination['start']);
+        $data = $this->db->get($this->_medicine_sale_details)->result_array();
+        
+        
+        return $data;
+    }
+    
+    public function vendor_stock_report_count()
+    {
+        $this->db->select(array($this->_medicine_category . '.name', $this->_medicine_stock . '.price'));
+        $this->db->select('SUM(' . $this->_medicine_sale_details . '.quantity' . ') as sold_quantity');
+        $this->db->select('SUM(' . $this->_medicine_sale_details . '.amount' . ') as revenue');
+        $this->db->select('SUM(' . $this->_medicine_stock . '.quantity' . ') as total_stock');
+        $this->db->select('SUM(' . $this->_medicine_stock . '.loose_item_quantity' . ') as loose_item_quantity');
+        $this->db->join($this->_medicine_stock, $this->_medicine_stock . '.batch = ' . $this->_medicine_sale_details . '.batch', 'INNER');
+        $this->db->join($this->_table_vendors, $this->_medicine_stock . '.vendor_id = ' . $this->_table_vendors . '.id', 'INNER');
+        $this->db->join($this->_medicine_category, $this->_medicine_sale_details . '.medicine_id = ' . $this->_medicine_category . '.medicine_category_id', 'INNER');
+        $this->db->where($this->_table_vendors . '.id', 10);
+        $this->db->group_by($this->_medicine_sale_details . '.medicine_id');
+       
+        $query = $this->db->get($this->_medicine_sale_details);
+        $result = $query->num_rows();
+        return $result;
+    }
 }

@@ -7,7 +7,15 @@
                 </a>
             </li>
 		</ul>
+        
+        <ul class="nav nav-tabs nav-tabs-left">
+			<li class="active">
+            	<a href="index.php?pharmacist/vendor_stock_report"><i class="icon-wrench"></i>Vendor Stock Report</a>
+            </li>
+		</ul>
 	</div>
+    
+		
 
 	<div class="box-content padded">
     	<div class="tab-content">            
