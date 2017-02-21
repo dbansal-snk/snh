@@ -13,7 +13,7 @@ common = function() {
             }
         });
     }
-    
+
     return {
         ajaxRequest : function(url, data) {
             return ajaxRequest(url, data);
