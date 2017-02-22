@@ -141,6 +141,7 @@ class Pharmacist extends My_Controller
 	function manage_medicine($param1 = '', $param2 = '', $param3 = '')
 	{	
 		if ($param1 == 'create') {
+            $data['invoice_no']             = $this->input->post('invoice');
 			$data['medicine_category_id']   = $this->input->post('medicine_category_id');
 			$data['description']            = $this->input->post('description');
 			$data['price']                  = $this->input->post('price');
@@ -176,11 +177,12 @@ class Pharmacist extends My_Controller
 
 		if ($param1 == 'edit' && $param2 == 'do_update') {
 
+            $data['invoice_no']             = $this->input->post('invoice');
 			$data['medicine_category_id']   = $this->input->post('medicine_category_id');
 			$data['description']            = $this->input->post('description');
 			$data['price']                  = $this->input->post('price');
-			$data['manufacture_company_id']  = $this->input->post('manufacturing_company');
-            $data['vendor_id']          = $this->input->post('vendor_name');
+			$data['manufacture_company_id'] = $this->input->post('manufacturing_company');
+            $data['vendor_id']              = $this->input->post('vendor_name');
             $data['quantity']               = $this->input->post('quantity');
             $data['mrp']                    = $this->input->post('mrp');
             $data['medicine_purchase_date'] = $this->input->post('purchase_date');
@@ -202,7 +204,7 @@ class Pharmacist extends My_Controller
             
 			$this->db->where('id', $param3);
             $this->db->update('medicine_stock', $data);
-            log_message('error', $this->db->last_query());
+            
             $this->_check_medicines_stock($data['medicine_category_id']);
 			$this->session->set_flashdata('flash_message', get_phrase('medicine_updated'));
 			redirect(base_url() . 'index.php?pharmacist/manage_medicine', 'refresh');
