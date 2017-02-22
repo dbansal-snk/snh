@@ -5,6 +5,7 @@ medicine = function() {
     var _sold_to_patient_url     = 'index.php?pharmacist/sold_to_patient';
     var _check_med_duplicacy_url = 'index.php?pharmacist/check_dupliate_medicine_sale';
     var _generate_bill_url       = 'index.php?pharmacist/generate_medicine_bill';
+    var _pop_up_timer            = 5000;
      
     function calculate_med_price()
     {
@@ -329,7 +330,20 @@ medicine = function() {
             {
                 $('.loader').hide();
                 if ('undefined' != typeof response.error && true == response.error) {
-                    alert('You have recently sold the same medcines to the patient ' + response.content.patient_name);
+                    swal({
+                        title: "Information",
+                        text: "You have recently sold the same medcines to the patient <strong>" + response.content.patient_name + "</strong>. Do you still want to store the information.",
+                        type: "info",
+                        showCancelButton: true,
+                        confirmButtonColor: "#DD6B55",
+                        confirmButtonText: "Yes",
+                        closeOnConfirm: false,
+                        cancelButtonText: 'No',
+                        html: true
+                      },
+                      function(){
+                         save_prescribed_details();
+                      });
                 } else {
                     save_prescribed_details();
                 }
@@ -349,7 +363,12 @@ medicine = function() {
             {
                 $('.loader').hide();
                 if ('undefined' != typeof response.content.error && true == response.content.error) {
-                    alert(response.content.message);
+                    swal({
+                        title: "Warning",
+                        text: response.content.message,
+                        timer: _pop_up_timer,
+                        html: true
+                      });
                 } else {
                     window.location.href = 'index.php?pharmacist/manage_prescription';
                 }

@@ -491,7 +491,7 @@ class Pharmacist extends My_Controller
                 $remaining_stock = 0;
                 $remaining_stock = $list['total_stock'] - $list['sold_stock'];
                 if ($remaining_stock < $list['going_to_sell']) {
-                    $error_message .= $remaining_stock .' medicine remaining for medicine ' . $list['name'] . "\n";
+                    $error_message .= $remaining_stock .' medicine remaining for medicine ' . $list['name'] . ".\n ";
                 }
             }
         }
