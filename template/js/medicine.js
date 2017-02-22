@@ -57,7 +57,7 @@ medicine = function() {
 
 	function add_medicine_container() {
 		var labelCount = $("[id*='selling_med_detais']").length + 1;
-		
+
 		// keep the medicine details count in the hidden parameter
 		$('#total_med_details').val(labelCount);
 
@@ -408,8 +408,28 @@ medicine = function() {
 		}
 	}
 
+	function validat_medicine_sale_form() {
+		var totalSellingMedCount = $("[id*='selling_med_detais']").length;
+		var erroMessage = '';
+		for (var i = 1; i <= totalSellingMedCount; i++) {
+			var selectedMedValue = $('#medicine_id' + i).val();
+			if (selectedMedValue == 0) {
+				erroMessage += 'Please select Medicine' + i + '\n';
+			}
+		}
+
+		if ('' != erroMessage) {
+			alert(erroMessage);
+			return false;
+		} else {
+			updateMedicine();
+		}
+	}
+
+
 	function updateMedicine()
 	{
+
 					var formDetails = $('#update_medicine').serializeArray();
 					$.ajax({
 									type: 'POST',
@@ -419,6 +439,7 @@ medicine = function() {
 									{
 													if ('undefined' != typeof response.content.error && true == response.content.error) {
 																	alert(response.content.message);
+	return false;
 													} else {
 																	window.location.href = 'index.php?pharmacist/manage_prescription';
 													}
@@ -430,6 +451,10 @@ medicine = function() {
 		calculate_med_price: function() {
 			calculate_med_price();
 		},
+		updateMedicine: function() {
+						updateMedicine();
+		},
+
 
 		get_loose_item_derails: function() {
 			get_loose_item_derails();
@@ -450,6 +475,10 @@ medicine = function() {
 		validate_medicine_sale_form: function() {
 			validate_medicine_sale_form();
 		},
+		validat_medicine_sale_form: function() {
+			validat_medicine_sale_form();
+		},
+
 
 		validate_medicine_stock_form: function() {
 			return validate_medicine_stock_form();

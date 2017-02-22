@@ -31,7 +31,7 @@
 			<div class="tab-pane box active" id="edit" style="padding: 5px">
       <div class="box-content">
 
-        <form method="post" id="update_medicine" action="<?php echo base_url();?>index.php?pharmacist/update" class="form-horizontal validatable">
+        <form method="post" id="update_medicine"  class="form-horizontal validatable">
          <input type="hidden" id="mid" name="mid" value="<?php echo $edit_profile['0']['medicine_sale_id'];?>">
 
           <?php
@@ -110,7 +110,7 @@
                     <div class="addMedicineText" onclick="medicine.add_medicine_container();"><?php echo get_phrase('Add_Medicine');?></div>
                 </div>
 
-                <input type="hidden" id="total_med_details" name="total_med_details" value="1">
+                <input type="hidden" id="total_med_details" name="total_med_details" value="<?=$i?>">
 
             </div>
             <?php
@@ -196,13 +196,14 @@ $(document).ready( function () {
     });
 });
 
-$( "#save_prescribed_details" ).click(function() {
-  medicine.validate_medicine_sale_form();
+$( "#update_prescribed_details" ).click(function(e) {
+ e.preventDefault();
+  medicine.validat_medicine_sale_form();
 });
 
-$( "#update_prescribed_details" ).click(function() {
-  medicine.updateMedicine();
-});
+// $( "#update_prescribed_details" ).click(function() {
+//   medicine.updateMedicine();
+// });
 
  $( ".datepicker" ).datepicker({
         changeYear: true,
