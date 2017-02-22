@@ -266,16 +266,23 @@ medicine = function() {
     }
     
     function validate_medicine_sale_form() {
+        $('.loader').show();
         var totalSellingMedCount = $("[id*='selling_med_detais']").length;
         var erroMessage = '';
         for (var i=1; i<=totalSellingMedCount; i++) {
             var selectedMedValue = $('#medicine_id' + i).val();
+            var medQuantity      = $('#med_quantity' + i).val();
             if (selectedMedValue == 0) {
-                erroMessage += 'Please select Medicine' + i + '\n';
+                erroMessage += 'Please select Medicine' + i + '.\n';
+            }
+            
+            if (medQuantity <= 0) {
+                erroMessage += 'Please enter the Quantity' + i + '.\n';
             }
         }
         
         if ('' != erroMessage) {
+            $('.loader').hide();
             alert(erroMessage);
             return false;
         } else {
@@ -319,10 +326,11 @@ medicine = function() {
             data: formDetails,
             success: function(response)
             {
+                $('.loader').hide();
                 if ('undefined' != typeof response.content.error && true == response.content.error) {
                     alert(response.content.message);
                 } else {
-                    window.location.href = '/index.php?pharmacist/manage_prescription';
+                    window.location.href = 'index.php?pharmacist/manage_prescription';
                 }
             }
         });

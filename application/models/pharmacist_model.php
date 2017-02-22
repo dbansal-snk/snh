@@ -270,4 +270,58 @@ class Pharmacist_model extends CI_Model
             $this->db->update($this->_medicine_sale, $data);
         }
     }
+    
+    public function vendor_stock_report($vendor_id, $pagination)
+    {
+        $this->db->select(array($this->_medicine_category . '.name', $this->_medicine_stock . '.price'));
+        $this->db->select('SUM(' . $this->_medicine_sale_details . '.quantity' . ') as sold_quantity');
+        $this->db->select('SUM(' . $this->_medicine_sale_details . '.amount' . ') as revenue');
+        $this->db->select('SUM(' . $this->_medicine_stock . '.quantity' . ') as total_stock');
+        $this->db->select('SUM(' . $this->_medicine_stock . '.free_item' . ') as free_item');
+        $this->db->select('IF(' . $this->_medicine_stock . '.is_latest_stock = 1, ' . $this->_medicine_stock . '.loose_item_quantity, 0 ' . ') as loose_item_quantity', false);
+        
+        $this->db->join($this->_table_vendors, $this->_medicine_stock . '.vendor_id = ' . $this->_table_vendors . '.id', 'INNER');
+        $this->db->join($this->_medicine_category, $this->_medicine_stock . '.medicine_category_id = ' . $this->_medicine_category . '.medicine_category_id', 'INNER');
+        $this->db->join($this->_medicine_sale_details, $this->_medicine_stock . '.batch = ' . $this->_medicine_sale_details . '.batch', 'LEFT');
+        $this->db->where($this->_table_vendors . '.id', $vendor_id);
+        $this->db->group_by($this->_medicine_stock . '.medicine_category_id');
+        $this->db->limit($pagination['offset'], $pagination['start']);
+
+        if (!empty($pagination['sort_name']) && !empty($pagination['sort_order'])) {
+            $this->db->order_by($pagination['sort_name'], $pagination['sort_order']);
+        }
+        
+        $data = $this->db->get($this->_medicine_stock)->result_array();
+//        log_message('error', $this->db->last_query());
+        return $data;
+    }
+    
+    public function vendor_stock_report_count($vendor_id)
+    {
+        $this->db->select($this->_medicine_category . '.name');
+        $this->db->join($this->_table_vendors, $this->_medicine_stock . '.vendor_id = ' . $this->_table_vendors . '.id', 'INNER');
+        $this->db->join($this->_medicine_category, $this->_medicine_stock . '.medicine_category_id = ' . $this->_medicine_category . '.medicine_category_id', 'INNER');
+        $this->db->join($this->_medicine_sale_details, $this->_medicine_stock . '.batch = ' . $this->_medicine_sale_details . '.batch', 'LEFT');
+        $this->db->where($this->_table_vendors . '.id', $vendor_id);
+        $this->db->group_by($this->_medicine_stock . '.medicine_category_id');
+       
+        $query = $this->db->get($this->_medicine_stock);
+        $result = $query->num_rows();
+        return $result;
+    }
+    
+    public function get_med_stock_list()
+    {
+        $result = array();
+        $this->db->select(array($this->_medicine_stock . '.quantity', $this->_medicine_stock . '.price', $this->_medicine_stock . '.free_item',
+            $this->_medicine_stock . '.id', $this->_table_manufacture_company . '.name as company_name',
+            $this->_table_vendors . '.name as vendor_name', $this->_medicine_category . '.name as medicine_name',
+            $this->_medicine_stock . '.status'));
+        $this->db->join($this->_table_vendors, $this->_table_vendors . '.id = ' . $this->_medicine_stock . '.vendor_id', 'LEFT');
+        $this->db->join($this->_table_manufacture_company, $this->_table_manufacture_company . '.id = ' . $this->_medicine_stock . '.manufacture_company_id', 'LEFT');
+        $this->db->join($this->_medicine_category, $this->_medicine_category . '.medicine_category_id = ' . $this->_medicine_stock . '.medicine_category_id', 'LEFT');
+        $query = $this->db->get($this->_medicine_stock);
+        $result = $query->result_array();
+        return $result;
+    }
 }
