@@ -4,14 +4,14 @@
 		<ul class="nav nav-tabs nav-tabs-left">
         	<?php if(isset($edit_profile)):?>
 			<li class="active">
-            	<a href="#edit" data-toggle="tab"><i class="icon-wrench"></i> 
+            	<a href="#edit" data-toggle="tab"><i class="icon-wrench"></i>
 					<?php echo get_phrase('Edit Company');?>
                     	</a>
             </li>
             <?php endif;?>
-			
+
             <li class="<?php if(!isset($edit_profile))echo 'active';?>">
-            	<a href="#list" data-toggle="tab"><i class="icon-align-justify"></i> 
+            	<a href="#list" data-toggle="tab"><i class="icon-align-justify"></i>
 					<?php echo get_phrase('Company List');?>
                 </a>
             </li>
@@ -25,7 +25,7 @@
 
     	<!------CONTROL TABS END------->
 
-        
+
 
 	</div>
 
@@ -56,7 +56,7 @@
                                 <label class="control-label"><?php echo get_phrase('Status');?></label>
                                 <div class="controls">
                                     <select name="status" class="uniform" style="width:100%;">
-                                        <?php 
+                                        <?php
                                         $active_selected = '';
                                         $inactive_selected = '';
                                         if (!empty($edit_company_list['status']) && $edit_company_list['status'] == 'ACTIVE') {
@@ -80,7 +80,7 @@
 
             <!----EDITING FORM ENDS--->
 
-            
+
 
             <!----TABLE LISTING STARTS--->
 
@@ -97,7 +97,7 @@
 
                     <tbody>
 
-                    	<?php 
+                    	<?php
                         if (is_array($company_list) && count($company_list) > 0) {
                         foreach($company_list as $row) { ?>
 
@@ -121,15 +121,15 @@
 
                     </tbody>
 
-                </table> 
+                </table>
 
 			</div>
 
             <!----TABLE LISTING ENDS--->
 
-            
 
-            
+
+
 
 			<!----CREATION FORM STARTS---->
 
@@ -151,7 +151,7 @@
                                     <input type="text" class="" name="description"/>
                                 </div>
                             </div>
-                            
+
                             <div class="control-group">
                                 <label class="control-label"><?php echo get_phrase('Status');?></label>
                                 <div class="controls">
@@ -167,13 +167,13 @@
                             <button type="submit" class="btn btn-blue"><?php echo get_phrase('Submit');?></button>
                         </div>
 
-                    <?php echo form_close();?>                
-                </div>                
+                    <?php echo form_close();?>
+                </div>
 			</div>
 
 			<!----CREATION FORM ENDS--->
 
-            
+
 
 		</div>
 
