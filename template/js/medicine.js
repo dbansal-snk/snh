@@ -57,6 +57,7 @@ medicine = function() {
 
 	function add_medicine_container() {
 		var labelCount = $("[id*='selling_med_detais']").length + 1;
+		
 		// keep the medicine details count in the hidden parameter
 		$('#total_med_details').val(labelCount);
 
@@ -405,6 +406,24 @@ medicine = function() {
 				}
 			});
 		}
+	}
+
+	function updateMedicine()
+	{
+					var formDetails = $('#update_medicine').serializeArray();
+					$.ajax({
+									type: 'POST',
+									url: 'index.php?pharmacist/update',
+									data: formDetails,
+									success: function(response)
+									{
+													if ('undefined' != typeof response.content.error && true == response.content.error) {
+																	alert(response.content.message);
+													} else {
+																	window.location.href = 'index.php?pharmacist/manage_prescription';
+													}
+									}
+					});
 	}
 
 	return {

@@ -1,5 +1,5 @@
 manage_category = function() {
-    
+
     function addMedicine()
     {
         var formDetails = $('#add_medicine').serializeArray();
@@ -15,9 +15,9 @@ manage_category = function() {
                     location.reload();
                 }
             }
-        });   
+        });
     }
-    
+
     function updateMedicine()
     {
         var formDetails = $('#update_medicine').serializeArray();
@@ -33,14 +33,14 @@ manage_category = function() {
                     window.location.href = 'index.php?pharmacist/manage_medicine_category';
                 }
             }
-        });   
+        });
     }
-    
+
     return {
         addMedicine: function() {
             addMedicine();
         },
-        
+
         updateMedicine: function() {
             updateMedicine();
         }
