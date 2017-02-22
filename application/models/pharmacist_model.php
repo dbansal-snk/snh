@@ -10,7 +10,9 @@ class Pharmacist_model extends CI_Model
     private $_medicine_stock;
     private $_table_vendors;
     private $_table_manufacture_company;
-    const STATUS_ACTIVE = 'ACTIVE';
+    
+    const STATUS_ACTIVE                 = 'ACTIVE';
+    const DUPLICATE_RECORDS_TIME_SPAN   = 30;
             
 	function __construct()
     {
@@ -321,6 +323,23 @@ class Pharmacist_model extends CI_Model
         $this->db->join($this->_table_manufacture_company, $this->_table_manufacture_company . '.id = ' . $this->_medicine_stock . '.manufacture_company_id', 'LEFT');
         $this->db->join($this->_medicine_category, $this->_medicine_category . '.medicine_category_id = ' . $this->_medicine_stock . '.medicine_category_id', 'LEFT');
         $query = $this->db->get($this->_medicine_stock);
+        $result = $query->result_array();
+        return $result;
+    }
+    
+    /**
+     * @method check_dupliate_medicine_sale
+     * @desc This function checks the sale of medicine already done or not
+     */
+    public function check_dupliate_medicine_sale()
+    {
+        $result = array();
+        $this->db->select('GROUP_CONCAT(' . $this->_medicine_sale_details . '.medicine_id) as purchased_medicine');
+        $this->db->select($this->_medicine_sale . '.patient_name');
+        $this->db->join($this->_medicine_sale_details, $this->_medicine_sale . '.id = ' . $this->_medicine_sale_details . '.medicine_sale_id');
+        $this->db->where($this->_medicine_sale . '.create_date >= DATE_SUB(NOW(), INTERVAL ' . self::DUPLICATE_RECORDS_TIME_SPAN . ' MINUTE)');
+        
+        $query  = $this->db->get($this->_medicine_sale);
         $result = $query->result_array();
         return $result;
     }

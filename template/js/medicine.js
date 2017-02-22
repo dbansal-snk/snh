@@ -1,9 +1,10 @@
 medicine = function() {
 
-    var _batch_list_url      = 'index.php?pharmacist/get_medicine_batch_list';
-    var _med_distributor_url = 'index.php?pharmacist/get_med_distributor_details';
-    var _sold_to_patient_url = 'index.php?pharmacist/sold_to_patient';
-    var _generate_bill_url   = 'index.php?pharmacist/generate_medicine_bill';
+    var _batch_list_url          = 'index.php?pharmacist/get_medicine_batch_list';
+    var _med_distributor_url     = 'index.php?pharmacist/get_med_distributor_details';
+    var _sold_to_patient_url     = 'index.php?pharmacist/sold_to_patient';
+    var _check_med_duplicacy_url = 'index.php?pharmacist/check_dupliate_medicine_sale';
+    var _generate_bill_url       = 'index.php?pharmacist/generate_medicine_bill';
      
     function calculate_med_price()
     {
@@ -286,7 +287,7 @@ medicine = function() {
             alert(erroMessage);
             return false;
         } else {
-            save_prescribed_details();
+            check_dupliate_medicine_sale();
         }
     }
     
@@ -314,6 +315,26 @@ medicine = function() {
             alert(errorMessage);
             return false;
         }
+    }
+    
+    function check_dupliate_medicine_sale()
+    {
+        var formDetails = $('#med_prescribed_form').serializeArray();
+        
+        $.ajax({
+            type: 'POST',
+            url: _check_med_duplicacy_url,
+            data: formDetails,
+            success: function(response)
+            {
+                $('.loader').hide();
+                if ('undefined' != typeof response.error && true == response.error) {
+                    alert('You have recently sold the same medcines to the patient ' + response.content.patient_name);
+                } else {
+                    save_prescribed_details();
+                }
+            }
+        });
     }
     
     function save_prescribed_details()
@@ -365,13 +386,14 @@ medicine = function() {
         if (medicineId > 0) {
             var postdata = {};
             postdata['medicine_id'] = medicineId;
-            
+            $('.loader').show();
             $.ajax({
                 type: 'POST',
                 url: _batch_list_url,
                 data: postdata,
                 success: function(response)
                 {
+                    $('.loader').hide();
                     if ('undefined' != typeof response.content && '' != response.content) {
                         $.each(response.content, function( index, value ) {
                             var newOption = $('<option>');
