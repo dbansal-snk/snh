@@ -100,7 +100,7 @@
                     	<?php foreach($vendors_list as $row) {?>
 
                         <tr>
-							<td><?php echo $row['name'];?></td>
+							<td class="cname"><?php echo $row['name'];?></td>
 							<td><?php echo $row['description'];?></td>
                             <td><?php echo $row['status'];?></td>
 							<td align="center">
@@ -192,13 +192,14 @@ $(document).ready( function () {
     });
 } );
 jQuery('body').on('click','.delete',function(eve){
-
-	eve.preventDefault();
-	var deleteLink = jQuery(this).attr('data-delete');
+		var currentRow=$(this).closest("tr");
+		var cmpname=currentRow.find(".cname").html();
+		eve.preventDefault();
+		var deleteLink = jQuery(this).attr('data-delete');
 	swal({
-  	title: 'Are you sure?',
-   text: "You won't be able to delete this!",
-  	type: 'warning',
+  	title: '',
+			text: "Are you sure want to delete vendor ! " +cmpname,
+			type: 'warning',
 			showCancelButton:true,
 
 			showConfirmButton:true,
