@@ -110,10 +110,15 @@
                                 	rel="tooltip" data-placement="top" data-original-title="<?php echo get_phrase('edit');?>" class="btn btn-blue">
                                 		<i class="icon-wrench"></i>
                                 </a>
-                            	<a href="<?php echo base_url();?>index.php?pharmacist/delete_manufacture_company/<?php echo $row['id'];?>" onclick="return confirm('delete?')"
-                                	rel="tooltip" data-placement="top" data-original-title="<?php echo get_phrase('delete');?>" class="btn btn-red">
+                            	<a href="javascript:;"
+													data-delete = "<?php echo base_url();?>index.php?pharmacist/delete_manufacture_company/<?php echo $row['id'];?>"
+                                	rel="tooltip" data-placement="top" data-original-title="<?php echo get_phrase('delete');?>" class="btn btn-red delete">
                                 		<i class="icon-trash"></i>
                                 </a>
+                            	<!-- <a href="<?php echo base_url();?>index.php?pharmacist/delete_manufacture_company/<?php echo $row['id'];?>" onclick="return confirm('delete?')"
+                                	rel="tooltip" data-placement="top" data-original-title="<?php echo get_phrase('delete');?>" class="btn btn-red">
+                                		<i class="icon-trash"></i>
+                                </a> -->
         					</td>
                         </tr>
 
@@ -189,4 +194,23 @@ $(document).ready( function () {
         "paging":         false
     });
 } );
+
+jQuery('body').on('click','.delete',function(eve){
+
+	eve.preventDefault();
+	var deleteLink = jQuery(this).attr('data-delete');
+	swal({
+  	title: 'Are you sure?',
+   text: "You won't be able to delete this!",
+  	type: 'warning',
+			showCancelButton:true,
+
+			showConfirmButton:true,
+  },
+  function(){
+
+			window.location.href = deleteLink;
+});
+
+});
 </script>

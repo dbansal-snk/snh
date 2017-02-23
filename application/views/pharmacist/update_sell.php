@@ -55,6 +55,7 @@
 
                  ?>
                  <input type="hidden" id="md_id<?=$i?>" name="md_id<?=$i?>" value="<?php echo $edit_profile[$j]['id'];?>">
+                 <div class="control-group" id="sold_med_details<?=$i?>">
                 <div id="med_details_container">
                     <div class="control-group"id="selling_med_detais<?=$i?>">
                         <label class="control-label"><?php echo get_phrase('Medicine'.$i );?></label>
@@ -71,6 +72,9 @@
                                 ?>
 
                             </select>
+                            <?php if($j!=0){?>
+                            <div id="<?=$i?>" class="removeMedicine" onclick="medicine.remove_medicine_container(<?=$i?>);"></div>
+                            <?php } ?>
                         </div>
                     </div>
 
@@ -119,9 +123,11 @@
             {
             ?>
             <div class="seprator-dooted-lines"></div>
+
             <?php
             }
             ?>
+            </div>
             <?php
             $i++;
                 } ?>

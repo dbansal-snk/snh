@@ -4,14 +4,14 @@
 		<ul class="nav nav-tabs nav-tabs-left">
         	<?php if(isset($edit_profile)):?>
 			<li class="active">
-            	<a href="#edit" data-toggle="tab"><i class="icon-wrench"></i> 
+            	<a href="#edit" data-toggle="tab"><i class="icon-wrench"></i>
 					<?php echo get_phrase('edit_vendors');?>
                     	</a>
             </li>
             <?php endif;?>
-			
+
             <li class="<?php if(!isset($edit_profile))echo 'active';?>">
-            	<a href="#list" data-toggle="tab"><i class="icon-align-justify"></i> 
+            	<a href="#list" data-toggle="tab"><i class="icon-align-justify"></i>
 					<?php echo get_phrase('vendors_list');?>
                 </a>
             </li>
@@ -25,7 +25,7 @@
 
     	<!------CONTROL TABS END------->
 
-        
+
 
 	</div>
 
@@ -56,7 +56,7 @@
                                 <label class="control-label"><?php echo get_phrase('Status');?></label>
                                 <div class="controls">
                                     <select name="status" class="uniform" style="width:100%;">
-                                        <?php 
+                                        <?php
                                         $active_selected = '';
                                         $inactive_selected = '';
                                         if (!empty($edit_vendors_list['status']) && $edit_vendors_list['status'] == 'ACTIVE') {
@@ -80,7 +80,7 @@
 
             <!----EDITING FORM ENDS--->
 
-            
+
 
             <!----TABLE LISTING STARTS--->
 
@@ -108,10 +108,15 @@
                                 	rel="tooltip" data-placement="top" data-original-title="<?php echo get_phrase('edit');?>" class="btn btn-blue">
                                 		<i class="icon-wrench"></i>
                                 </a>
-                            	<a href="<?php echo base_url();?>index.php?pharmacist/delete_vendor/<?php echo $row['id'];?>" onclick="return confirm('delete?')"
-                                	rel="tooltip" data-placement="top" data-original-title="<?php echo get_phrase('delete');?>" class="btn btn-red">
+                            	<a href="javascript:;"
+													data-delete = "<?php echo base_url();?>index.php?pharmacist/delete_vendor/<?php echo $row['id'];?>"
+                                	rel="tooltip" data-placement="top" data-original-title="<?php echo get_phrase('delete');?>" class="btn btn-red delete">
                                 		<i class="icon-trash"></i>
                                 </a>
+                            	<!-- <a href="<?php echo base_url();?>index.php?pharmacist/delete_vendor/<?php echo $row['id'];?>" onclick="return confirm('delete?')"
+                                	rel="tooltip" data-placement="top" data-original-title="<?php echo get_phrase('delete');?>" class="btn btn-red">
+                                		<i class="icon-trash"></i>
+                                </a> -->
         					</td>
                         </tr>
 
@@ -125,9 +130,9 @@
 
             <!----TABLE LISTING ENDS--->
 
-            
 
-            
+
+
 
 			<!----CREATION FORM STARTS---->
 
@@ -149,7 +154,7 @@
                                     <input type="text" class="" name="description"/>
                                 </div>
                             </div>
-                            
+
                             <div class="control-group">
                                 <label class="control-label"><?php echo get_phrase('Status');?></label>
                                 <div class="controls">
@@ -165,13 +170,13 @@
                             <button type="submit" class="btn btn-blue"><?php echo get_phrase('Submit');?></button>
                         </div>
 
-                    <?php echo form_close();?>                
-                </div>                
+                    <?php echo form_close();?>
+                </div>
 			</div>
 
 			<!----CREATION FORM ENDS--->
 
-            
+
 
 		</div>
 
@@ -186,4 +191,23 @@ $(document).ready( function () {
         "paging":         false
     });
 } );
+jQuery('body').on('click','.delete',function(eve){
+
+	eve.preventDefault();
+	var deleteLink = jQuery(this).attr('data-delete');
+	swal({
+  	title: 'Are you sure?',
+   text: "You won't be able to delete this!",
+  	type: 'warning',
+			showCancelButton:true,
+
+			showConfirmButton:true,
+  },
+  function(){
+
+			window.location.href = deleteLink;
+});
+
+});
+
 </script>
