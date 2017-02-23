@@ -46,6 +46,7 @@
                         <input type="text" id="patient_name" name="patient_name" value="<?php echo $edit_profile['0']['patient_name'];?>"/>
                     </div>
                 </div>
+
                 <?php
                  $i=1;
                  for($j=0;$j<count($edit_profile);$j++)
@@ -113,6 +114,14 @@
                 <input type="hidden" id="total_med_details" name="total_med_details" value="<?=$i?>">
 
             </div>
+            <?php
+            if($i!=count($edit_profile))
+            {
+            ?>
+            <div class="seprator-dooted-lines"></div>
+            <?php
+            }
+            ?>
             <?php
             $i++;
                 } ?>
