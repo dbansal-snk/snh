@@ -50,7 +50,7 @@ $(document).ready( function () {
     
     var data = [];
     var columns = ['name', 'mrp', 'total_stock', 'remaining_stock', 'revenue'];
-    data['vendor_id'] = $('#stock_report_list').val();
+    data.vendor_id = $('#stock_report_list').val();
     var url = 'index.php?pharmacist/medicine_stock_report_list';
     ReportTable.init('medicine_stock_report', url, data, columns);
 } );

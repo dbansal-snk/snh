@@ -55,7 +55,7 @@
 $(document).ready(function() {
     $('#vendor_stock_report').DataTable();
     $("#vendor_listing").change(function() {
-        var data = [];
+        var data = {};
         var columns = ['name', 'total_stock', 'free_item', 'loose_item_quantity', 'sold_quantity', 'price', 'revenue'];
         data['vendor_id'] = $(this).val();
         var url = 'index.php?pharmacist/vendor_stock_report_list'

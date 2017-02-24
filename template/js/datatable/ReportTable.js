@@ -7,7 +7,7 @@ ReportTable = function() {
         dataTableId = $('#' + tableId);;
         var cols = getReportColumns(columns);
         applyFilter(tableId, data);
-        loadTable(url, cols);
+        loadTable(url, cols, data);
     }
     
     function getReportColumns(columns) {
@@ -19,7 +19,7 @@ ReportTable = function() {
         return cols;
     }
     
-    function loadTable(url, cols) {
+    function loadTable(url, cols, data) {
         dataTableId.DataTable().destroy();
         dataTableId.DataTable( {
             bProcessing : true,
@@ -40,8 +40,14 @@ ReportTable = function() {
                 loadingIndicator: true
             },
             "fnServerParams": function ( aoData ) {
+                if ('undefined' != typeof data) {
+                     $.each(data, function (value, key) {
+                         aoData.push({'name':value, 'value': key });
+                    });
+                }
+                
                 aoData.push({'name':"filterOptions", 'value': _filters });
-        }
+            }
         });
     }
     
