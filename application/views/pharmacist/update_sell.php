@@ -62,7 +62,7 @@
                     <div class="control-group"id="selling_med_detais<?php echo $i;?>">
                         <label class="control-label"><?php echo get_phrase('Medicine'.$i );?></label>
                         <div class="controls" id="medicine_list">
-                            <select name="medicine_id<?php echo $i;?>" id="medicine_id<?= $i ?>" onchange="medicine.calculate_med_price(), medicine.can_sell_loose_item(1), medicine.getMedicineBatchList(1);">
+                            <select name="medicine_id<?php echo $i;?>" id="medicine_id<?= $i ?>" class="medicine_id" onchange="medicine.calculate_med_price(),  medicine.can_sell_loose_item(1), medicine.getMedicineBatchList(1);">
                                 <option value="0">--Select Medicine--</option>
                                 <?php
                                 $medicine	= get_medicine_list();
@@ -84,7 +84,7 @@
                     <div class="control-group">
                         <label class="control-label">Batch<?= $i ?></label>
                         <div class="controls" id="batch_list">
-                            <select   name="batch_id<?php echo $i;?>" id="batch_id<?= $i ?>">
+                            <select class="batch_id"  name="batch_id<?php echo $i;?>" id="batch_id<?= $i ?>">
                             <option value="<?php echo $edit_profile[$j]['batch']; ?>"> <?php echo $edit_profile[$j]['batch']; ?></option>
                             </select>
                         </div>
@@ -211,6 +211,7 @@ $(document).ready( function () {
         "scrollCollapse": true,
         "paging":         false
     });
+    $(".medicine_id").select2();
 });
 
 $( "#update_prescribed_details" ).click(function(e) {

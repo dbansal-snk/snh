@@ -55,7 +55,7 @@
                             <div class="control-group">
                                 <label class="control-label"><?php echo get_phrase('Status');?></label>
                                 <div class="controls">
-                                    <select name="status" class="uniform" style="width:100%;">
+                                    <select name="status" class="status" >
                                         <?php
                                         $active_selected = '';
                                         $inactive_selected = '';
@@ -158,7 +158,7 @@
                             <div class="control-group">
                                 <label class="control-label"><?php echo get_phrase('Status');?></label>
                                 <div class="controls">
-                                    <select name="status" class="uniform" style="width:100%;">
+                                    <select name="status" class="status" >
                                         <option value="ACTIVE">ACTIVE</option>
                                         <option value="INACTIVE">IN ACTIVE</option>
                                     </select>
@@ -190,6 +190,8 @@ $(document).ready( function () {
         "scrollCollapse": true,
         "paging":         false
     });
+
+				$(".status").select2();
 } );
 jQuery('body').on('click','.delete',function(eve){
 		var currentRow=$(this).closest("tr");
