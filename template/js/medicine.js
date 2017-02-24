@@ -214,9 +214,17 @@ medicine = function() {
 	}
 
 	function remove_medicine_container(id) {
+		var remove_amt = $("input[id='med_amount"+id+"']").val();
+		var total_amount = 0;
 		$('*[id*=sold_med_details' + id + ']:visible').each(function() {
 			$(this).remove();
 		});
+		var current_total_amt = $("input[name='total_amount']").val();
+		var input_total_amt = (current_total_amt-remove_amt);
+	
+		$("input[name='total_amount']").val(parseFloat(input_total_amt).toFixed(2));
+
+
 
 		// keep the medicine details count in the hidden parameter
 		var labelCount = $("[id*='selling_med_detais']").length;

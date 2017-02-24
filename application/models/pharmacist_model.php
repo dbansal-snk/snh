@@ -31,6 +31,7 @@ class Pharmacist_model extends CI_Model
             $this->db->select('GROUP_CONCAT(' . $this->_medicine_category . '.name) as name');
             $this->db->select('GROUP_CONCAT(' . $this->_medicine_sale_details . '.quantity) as quantity');
             $this->db->select($this->_medicine_sale . '.*');
+             $this->db->where_in($this->_medicine_sale_details . '.is_deleted','0');
             $this->db->group_by($this->_medicine_sale_details . '.medicine_sale_id');
         }
 
@@ -277,6 +278,7 @@ class Pharmacist_model extends CI_Model
         $this->db->from($this->_medicine_sale);
         $this->db->join($this->_medicine_sale_details , $this->_medicine_sale.'.id ='.$this->_medicine_sale_details.'.medicine_sale_id');
          $this->db->where($this->_medicine_sale . '.id', $medicine_sale_id);
+         $this->db->where($this->_medicine_sale_details.'.is_deleted','0');
         $data = $this->db->get()->result_array();
 
         return $data;
@@ -300,6 +302,15 @@ class Pharmacist_model extends CI_Model
         $this->db->insert($this->_medicine_sale_details, $data);
         return $this->db->insert_id();
     }
-
+    // public function get_medicine_sold($medicine_id,$table)
+    // {
+    //     $data = array();
+    //     if (!empty($medicine_id)) {
+    //         $this->db->select('*');
+    //         $this->db->where($medicine_id);
+    //         $data = $this->db->get($table)->result_array();
+    //     }
+    //     return $data;
+    // }
 
 }
