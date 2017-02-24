@@ -51,41 +51,15 @@
 </div>
 
 <script>
-
+    
 $(document).ready(function() {
+    $('#vendor_stock_report').DataTable();
     $("#vendor_listing").change(function() {
-        var vendorId = $(this).val();
-        $('#vendor_stock_report').DataTable().destroy();
-        $('#vendor_stock_report').DataTable( {
-            processing : true,
-            bServerSide: true,
-            bLengthChange: false,
-            serverSide: true,
-            ordering: true,
-            pageLength: 50,
-            searching: false,
-            scrollY:        '600px',
-            scrollCollapse: true,
-            paging:         true,
-
-             ajax: {
-                "url": "/index.php?pharmacist/vendor_stock_report_list",
-                "type": "POST",
-                data: {vendor_id: vendorId}
-            },
-            "columns": [
-                { "data": "name" },
-                { "data": "total_stock" },
-                { "data": "free_item" },
-                { "data": "loose_item_quantity" },
-                { "data": "sold_quantity" },
-                { "data": "price" },
-                { "data": "revenue" }
-            ],
-            scroller: {
-                loadingIndicator: true
-            }
-        });
+        var data = [];
+        var columns = ['name', 'total_stock', 'free_item', 'loose_item_quantity', 'sold_quantity', 'price', 'revenue'];
+        data['vendor_id'] = $(this).val();
+        var url = 'index.php?pharmacist/vendor_stock_report_list'
+        ReportTable.init('vendor_stock_report', url, data, columns);
     });   
 });
 </script>

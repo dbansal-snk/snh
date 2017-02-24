@@ -54,7 +54,6 @@ medicine = function() {
             $('#loose_item_details').hide();
             $('#loose_item_quantity').val('');
         }
-        
     }
     
     function add_medicine_container()
@@ -348,13 +347,8 @@ medicine = function() {
                     var popupWin = window.open('', '_blank', 'width=1000,height=1000');
                     popupWin.document.open();
                     popupWin.document.write(response.content);
-//                    popupWin.document.close();
-//                    window.print();
                 }
             });
-
-//            window.print();
-//            document.body.innerHTML = id;
         }
     }
     

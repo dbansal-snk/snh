@@ -18,10 +18,13 @@
 		
 
 	<div class="box-content padded">
-    	<div class="tab-content">            
+    	<div class="tab-content">   
+            <div id="filter_containers">
+                <button id="apply_filter">Apply Filter</button>
+            </div>
             <div id="report">
                 <div style="margin-left: 400px;"><?php echo get_phrase('Total_Medicine_Revenue');?>: <?php echo !empty($all_med_revenue[0]['total_amount']) ? $all_med_revenue[0]['total_amount'] : 0; ?></div>
-                <table id="stock_report_list" class="display" cellspacing="0" width="100%"  class="dTable responsive">
+                <table id="medicine_stock_report" class="display" cellspacing="0" width="100%"  class="dTable responsive">
                     <thead>
                         <tr>
                             <th><div><?php echo get_phrase('Medicine');?></div></th>
@@ -31,24 +34,6 @@
                             <th><div><?php echo get_phrase('Total_Revenue');?></div></th>
                         </tr>
                     </thead>
-
-                    <tbody>
-                        <?php
-                        foreach ($data as $row) {?>
-                        <tr>
-                            <td><?php echo $row['name'];?></td>
-                            <td><?php echo $row['mrp'];?></td>
-                            <td><?php 
-                            $total_stock = !empty($row['total_stock']) ? $row['total_stock'] : 0;
-                            $total_stock += !empty($row['total_free_item_stock']) ? $row['total_free_item_stock'] : 0;
-                            echo $total_stock;?></td>
-                            <td><?php 
-                            $sold_stock = !empty($med_sold_stock[$row['medicine_category_id']]) ? $med_sold_stock[$row['medicine_category_id']] : 0;
-                            echo $total_stock - $sold_stock; ?></td>
-                            <td><?php echo !empty($row['total_amount']) ? $row['total_amount'] : 0;?></td>
-                        </tr>
-                        <?php } ?>
-                    </tbody>
                 </table>
             </div>
         </div>
@@ -62,5 +47,11 @@ $(document).ready( function () {
         "scrollCollapse": true,
         "paging":         false
     });
+    
+    var data = [];
+    var columns = ['name', 'mrp', 'total_stock', 'remaining_stock', 'revenue'];
+    data['vendor_id'] = $('#stock_report_list').val();
+    var url = 'index.php?pharmacist/medicine_stock_report_list';
+    ReportTable.init('medicine_stock_report', url, data, columns);
 } );
 </script>
