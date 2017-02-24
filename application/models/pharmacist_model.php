@@ -1,7 +1,7 @@
 <?php
 if (!defined('BASEPATH')) exit('No direct script access allowed');
 
-class Pharmacist_model extends CI_Model
+class Pharmacist_model extends MY_Model
 {
 
     private $_medicine_sale;
@@ -73,7 +73,7 @@ class Pharmacist_model extends CI_Model
         }
     }
     
-    public function get_medicine_revenue($medicine_ids = array())
+    public function get_medicine_revenue($medicine_ids = array(), $pagination = array())
     {
         $this->db->select(array($this->_medicine_category . '.name', $this->_medicine_stock . '.loose_item_quantity'));
         $this->db->select('SUM(' . $this->_medicine_stock . '.quantity) as total_stock');
@@ -86,14 +86,20 @@ class Pharmacist_model extends CI_Model
         }
         
         $this->db->group_by($this->_medicine_category . '.medicine_category_id');
-        $data = $this->db->get($this->_medicine_category)->result_array();
+        $this->db->limit($pagination['offset'], $pagination['start']);
+
+        if (!empty($pagination['sort_name']) && !empty($pagination['sort_order'])) {
+            $this->db->order_by($pagination['sort_name'], $pagination['sort_order']);
+        }
         
+        $data = $this->db->get($this->_medicine_category)->result_array();
         return $data;
     }
     
     public function get_sold_stock_of_medicine($medicine_ids = array())
     {
         $this->db->select('SUM(quantity) as sold_stock'); // this is a sold stock
+        $this->db->select('SUM(amount) as revenue'); // this is a sold stock
         $this->db->select(array('medicine_id'));
         if (is_array($medicine_ids) && count($medicine_ids) > 0) {
             $this->db->select($this->_medicine_category . '.name as name');
@@ -342,5 +348,32 @@ class Pharmacist_model extends CI_Model
         $query  = $this->db->get($this->_medicine_sale);
         $result = $query->result_array();
         return $result;
+    }
+
+    public function get_total_medicine_count($filters)
+    {
+        $this->db->select($this->_medicine_category . '.medicine_category_id');
+        $query = $this->db->get($this->_medicine_category);
+        
+        $result = $query->num_rows();
+        return $result;
+    }
+    
+    private function _get_medicine_report_filters($filters)
+    {
+        if (is_array($filters) && count($filters) > 0) {
+            foreach ($filters as $filter_array) {
+                $filter_obj             = new stdClass();
+                $filter_obj->colName    = $filter_array['fieldName'];
+                $filter_obj->operator   = $filter_array['operator'];
+                $filter_obj->colValue   = $filter_array['value'];
+                $filter_obj->colType    = $filter_array['type'];
+                $this->applyFilterExpression($filter_obj);
+            }
+            
+            //put this at the end in if condition bracket
+            $this->compileFilters();
+            
+        }
     }
 }
