@@ -35,8 +35,9 @@ medicine = function() {
 			var discount = $('#discount').val();
 			var totalDiscount = 0;
 			if ($.isNumeric(discount) == true && discount > 0) {
+
 				totalDiscount = ((totalAmount * discount) / 100).toFixed(2);
-				totalAmount = totalAmount - totalDiscount;
+				totalAmount = (totalAmount - totalDiscount).toFixed(2);;
 			}
 
 			$('#total_amount').val(totalAmount);
@@ -56,8 +57,8 @@ medicine = function() {
 	}
 
 	function add_medicine_container() {
-		var labelCount = $("[id*='selling_med_detais']").length + 1;
 
+		var labelCount = $("[id*='selling_med_detais']").length + 1;
 		// keep the medicine details count in the hidden parameter
 		$('#total_med_details').val(labelCount);
 
@@ -97,10 +98,13 @@ medicine = function() {
 		$('select.medicine_id').select2();
 
 		$('<option>').val(0).text('--Select Medicine--').appendTo('#medicine_id' + labelCount);
-
+		// $.each(medicineListOptions,function(key,value){
+		// 	$('#medicine_id' + labelCount).append(medicineListOptions);
+		// 	// $(medicineListOptions).appendTo('#medicine_id' + labelCount);
+		// });
 		$.each(medicineList, function(key, value) {
 			if ('undefined' != typeof value && '' != value) {
-				$('<option>').val(key).text(value).appendTo('#medicine_id' + labelCount);
+				$('<option>').val(medicineListOPtion[key]).text(value).appendTo('#medicine_id' + labelCount);
 			}
 		});
 

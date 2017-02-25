@@ -62,8 +62,8 @@
                     <div class="control-group"id="selling_med_detais<?php echo $i;?>">
                         <label class="control-label"><?php echo get_phrase('Medicine'.$i );?></label>
                         <div class="controls" id="medicine_list">
-                            <select name="medicine_id<?php echo $i;?>" id="medicine_id<?= $i ?>" class="medicine_id" onchange="medicine.calculate_med_price(),  medicine.can_sell_loose_item(1), medicine.getMedicineBatchList(1);">
-                                <option value="0">--Select Medicine--</option>
+                            <select name="medicine_id<?php echo $i;?>" id="medicine_id<?= $i ?>" class="medicine_id" onchange="medicine.calculate_med_price(),  medicine.can_sell_loose_item(<?php echo $i; ?>), medicine.getMedicineBatchList(1);">
+                                <option value="0">--11Select Medicine--</option>
                                 <?php
                                 $medicine	= get_medicine_list();
                                 foreach($medicine as $row):
@@ -74,9 +74,7 @@
                                 ?>
 
                             </select>
-                            <?php if($j!=0){?>
                             <div id="<?php echo $i;?>" class="removeMedicine" onclick="medicine.remove_medicine_container(<?php echo $i;?>);"></div>
-                            <?php } ?>
                         </div>
                     </div>
 
@@ -90,7 +88,7 @@
                         </div>
                     </div>
 
-                    <div class="control-group" id="loose_quantity_element1">
+                    <div class="control-group loose_med_option<?php echo $i; ?>" id="loose_quantity_element<?php echo $i; ?>">
                         <label class="control-label"><?php echo get_phrase('selling_loose_quantity'.$i);?></label>
                         <div class="controls">
                             <input type="checkbox" <?php if($edit_profile[$j]['is_loose_sale']==1){echo "checked";} ?> id="selling_loose_quantity<?= $i ?>" name="selling_loose_quantity<?php echo $i;?>" onchange="medicine.calculate_med_price();"/>
@@ -187,7 +185,9 @@ echo date("d-m-Y", strtotime($edit_profile['0']['medicine_sold_date']));
     var medicine_price_details = [];
     var loose_item_mrp = [];
     var medicineList = [];
+    var medicineListOPtion = [];
     var medicine_loose_item_info = [];
+
     <?php if (is_array($medicine_price_details) && count($medicine_price_details) > 0) {
      foreach ($medicine_price_details as $med_row) {
         ?>
@@ -197,10 +197,12 @@ echo date("d-m-Y", strtotime($edit_profile['0']['medicine_sold_date']));
      <?php }} ?>
 
     <?php
+    $medicine	= get_medicine_list();
     if (is_array($medicine) && count($medicine) > 0) {
-        foreach ($medicine as $medecine_row) {
-           ?>
-           medicineList[<?php echo $medecine_row['medicine_category_id'] ?>] = "<?php echo $medecine_row['name']; ?>";
+        foreach ($medicine as $key =>$medecine_row) {
+          ?>
+          medicineListOPtion[<?php echo $key; ?>] = "<?php echo $medecine_row['medicine_category_id']; ?>";
+           medicineList[<?php echo $key; ?>] = "<?php echo $medecine_row['name']; ?>";
     <?php
         }
     } ?>
