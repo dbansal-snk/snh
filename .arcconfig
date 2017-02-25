@@ -1,0 +1,7 @@
+{
+  "project.name" : "HMS",
+  "phabricator.uri" : "https://secure.phabricator.com/",
+  "arc.land.onto.default": "master",
+  "base": "git:merge-base(origin/master), arc:prompt"
+}
+
