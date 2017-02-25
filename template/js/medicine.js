@@ -86,12 +86,15 @@ medicine = function() {
 		}).appendTo(mouterDiv);
 
 		$('<select>').attr({
+			class:'medicine_id',
 			id: 'medicine_id' + labelCount,
 			name: 'medicine_id' + labelCount,
 			onchange: 'medicine.calculate_med_price(), medicine.can_sell_loose_item(' + labelCount + '), medicine.getMedicineBatchList(' + labelCount + ');',
 		}).appendTo(minnerDiv);
 
 		mouterDiv.appendTo('#med_details_container');
+
+		$('select.medicine_id').select2();
 
 		$('<option>').val(0).text('--Select Medicine--').appendTo('#medicine_id' + labelCount);
 
@@ -210,7 +213,6 @@ medicine = function() {
 		}).appendTo(ainnerDiv);
 
 		aouterDiv.appendTo('#med_details_container');
-
 	}
 
 	function remove_medicine_container(id) {
@@ -221,7 +223,7 @@ medicine = function() {
 		});
 		var current_total_amt = $("input[name='total_amount']").val();
 		var input_total_amt = (current_total_amt-remove_amt);
-	
+
 		$("input[name='total_amount']").val(parseFloat(input_total_amt).toFixed(2));
 
 
