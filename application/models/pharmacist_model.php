@@ -73,7 +73,7 @@ class Pharmacist_model extends MY_Model
         }
     }
     
-    public function get_medicine_revenue($medicine_ids = array(), $pagination = array())
+    public function get_medicine_revenue($medicine_ids = array(), $pagination = array(), $filters)
     {
         $this->db->select(array($this->_medicine_category . '.name', $this->_medicine_stock . '.loose_item_quantity'));
         $this->db->select('SUM(' . $this->_medicine_stock . '.quantity) as total_stock');
@@ -85,11 +85,15 @@ class Pharmacist_model extends MY_Model
             $this->db->where_in($this->_medicine_stock . '.medicine_category_id', $medicine_ids);
         }
         
+        $this->_get_medicine_report_filters($filters);
+        
         $this->db->group_by($this->_medicine_category . '.medicine_category_id');
         $this->db->limit($pagination['offset'], $pagination['start']);
 
         if (!empty($pagination['sort_name']) && !empty($pagination['sort_order'])) {
             $this->db->order_by($pagination['sort_name'], $pagination['sort_order']);
+        } else {
+            $this->db->order_by('name', 'ASC');
         }
         
         $data = $this->db->get($this->_medicine_category)->result_array();
@@ -353,8 +357,11 @@ class Pharmacist_model extends MY_Model
     public function get_total_medicine_count($filters)
     {
         $this->db->select($this->_medicine_category . '.medicine_category_id');
-        $query = $this->db->get($this->_medicine_category);
+        $this->db->join($this->_medicine_stock, $this->_medicine_stock . '.medicine_category_id = ' . $this->_medicine_category . '.medicine_category_id', 'LEFT');
+        $this->_get_medicine_report_filters($filters);
         
+        $this->db->group_by($this->_medicine_category . '.medicine_category_id');
+        $query = $this->db->get($this->_medicine_category);
         $result = $query->num_rows();
         return $result;
     }

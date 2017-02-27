@@ -3,21 +3,29 @@ ReportTable = function() {
     var _allFilterContainer = createDomEl("div",["allFiltersContainer"],null, null);
     var _filters = {};
     
-    function init(tableId, url, data, columns) {
-        dataTableId = $('#' + tableId);;
-        var cols = getReportColumns(columns);
+    function init() {
+        
+//        var cols = getReportColumns(columns);
+//        applyFilter(tableId, data);
+//        if ('undefined' != typeof columns) {
+//            loadTable(url, columns, data);
+//        }
+    }
+    
+    function loadTableData(tableId, url, data, columns) {
+        dataTableId = $('#' + tableId);
+
+        var cols = [];
+        // get the list of report's columns    
+        $.each(columns, function( key, value ) {
+            cols.push({'data': value});
+        });
+        
         applyFilter(tableId, data);
         loadTable(url, cols, data);
     }
     
-    function getReportColumns(columns) {
-        var cols = [];
-        $.each( columns, function( key, value ) {
-            cols.push({'data': value});
-        });
-        
-        return cols;
-    }
+  
     
     function loadTable(url, cols, data) {
         dataTableId.DataTable().destroy();
@@ -39,10 +47,10 @@ ReportTable = function() {
             scroller: {
                 loadingIndicator: true
             },
-            "fnServerParams": function ( aoData ) {
-                if ('undefined' != typeof data) {
-                     $.each(data, function (value, key) {
-                         aoData.push({'name':value, 'value': key });
+            fnServerParams: function ( aoData ) {
+                if ('undefined' != typeof data && '' != data) {
+                    $.each(data, function (value, key) {
+                        aoData.push({'name':value, 'value': key });
                     });
                 }
                 
@@ -52,8 +60,8 @@ ReportTable = function() {
     }
     
     
-    function applyFilter(tableId) {
-        buildFilters();
+    function applyFilter(tableId, data) {
+        buildFilters(data.report_config.content.columns);
         $( "#apply_filter" ).click(function() {
             get_filter_data();
             var table = $('#' + tableId).DataTable();
@@ -61,16 +69,22 @@ ReportTable = function() {
         });
     }
     
-    function buildFilters() {
+    function buildFilters(columns) {
         var _customFilter = createDomEl("select",null,null, 'filter');
 
         // create columns filters drop down
         var optionList = {};
-        optionList['name'] = 'Medicine';
-        optionList['mrp'] = 'M.R.P';
-        optionList['total_stock'] = 'Total Stock';
-        optionList['remaining_stock'] = 'Remaining Stock';
-        optionList['revenue'] = 'Revenue';
+        $.each(columns, function (key, value) {
+            if ('undefined' != typeof value.isFilter && true == value.isFilter) {
+                optionList[key] = value.name;
+            }
+        });
+                    
+//        optionList['name'] = 'Medicine';
+//        optionList['mrp'] = 'M.R.P';
+//        optionList['total_stock'] = 'Total Stock';
+//        optionList['remaining_stock'] = 'Remaining Stock';
+//        optionList['revenue'] = 'Revenue';
         $.each(optionList, function (value, key) {
             var option = createDomEl("option");
             option.text = key;
@@ -126,11 +140,41 @@ ReportTable = function() {
             domEl.id = id;
         }
         return domEl;
-}
+    }
+
+    function getReportConfig(url) {
+        var data = {};
+        $.ajax({
+            url: url,
+            success: function(response){
+                data.report_config = response;
+                data.columns       = getReportColumns(response.content.columns);
+                loadTableData('medicine_stock_report', 'index.php?pharmacist/medicine_stock_report_list', data, data.columns);
+            }
+        });
+
+        return data;
+    }
+    
+    function getReportColumns(data) {
+        var columns = [];
+        $.each(data, function (key, value) {
+            columns.push(key);
+        });
+        
+        return columns;
+    }
+
     
     return {
-        init: function(tableId, url, data, columns) {
-            init(tableId, url, data, columns);
+        init: function() {
+            
+        }, 
+        getReportConfig: function(url) {
+            return getReportConfig(url);
+        },
+        loadTableData: function(tableId, url, data, columns) {
+            loadTableData(tableId, url, data, columns);
         }
     }
 }();

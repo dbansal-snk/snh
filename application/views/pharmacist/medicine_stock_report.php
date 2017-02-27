@@ -42,16 +42,11 @@
 
 <script>
 $(document).ready( function () {
-    $('#stock_report_list').DataTable({
-        "scrollY":        "800px",
-        "scrollCollapse": true,
-        "paging":         false
-    });
     
-    var data = [];
-    var columns = ['name', 'mrp', 'total_stock', 'remaining_stock', 'revenue'];
-    data.vendor_id = $('#stock_report_list').val();
-    var url = 'index.php?pharmacist/medicine_stock_report_list';
-    ReportTable.init('medicine_stock_report', url, data, columns);
+    var data = {};
+    var columns = {};
+    var configUrl = 'index.php?pharmacist/get_med_report_config';
+    ReportTable.getReportConfig(configUrl);
+  
 } );
 </script>

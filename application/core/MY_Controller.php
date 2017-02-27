@@ -21,23 +21,19 @@ class My_Controller extends CI_Controller
         $result['start']      = 0;
         $result['sort_name']  = null;
         $result['sort_order'] = null;
+        $post_data            = $this->input->post();
         
         // get record's length
-        $start                = $this->input->post('start');
-        if (!empty($start)) {
-            $result['start'] = $start;
-        }
-        
-        $result['offset'] = self::RECORDS_OFFSET;
+        $result['start']      = $this->input->post('iDisplayStart');
+        $result['offset']     = self::RECORDS_OFFSET;
         
         // get sorting details
-        $order_details    = $this->input->post('order');
-        $columns_details  = $this->input->post('columns');
-        if (is_array($order_details) && count($order_details) > 0) {
-            if (isset($order_details[0]['column'])) {
-                $result['sort_name']  = $columns_details[$order_details[0]['column']]['data'];
-                $result['sort_order'] = $order_details[0]['dir'];
-            }
+        $result['sort_order']  = $this->input->post('sSortDir_0');
+        $sort_column_index     = $this->input->post('iSortCol_0');
+        $columns_count         = $this->input->post('columns');
+
+        if (isset($post_data['mDataProp_' . $sort_column_index])) {
+            $result['sort_name']  = $post_data['mDataProp_' . $sort_column_index];
         }
         
         return $result;
