@@ -205,7 +205,7 @@ jQuery('body').on('click','.delete',function(eve){
 
 	swal({
   	title: '',
-   text: "Are you sure want to delete company ! "+cmpname,
+   text: "Are you sure want to delete company "+cmpname+" ?",
   	type: 'warning',
 			showCancelButton:true,
 

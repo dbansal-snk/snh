@@ -200,7 +200,7 @@ jQuery('body').on('click','.delete',function(eve){
 		var deleteLink = jQuery(this).attr('data-delete');
 	swal({
   	title: '',
-			text: "Are you sure want to delete vendor ! " +cmpname,
+			text: "Are you sure want to delete vendor " +cmpname+" ?",
 			type: 'warning',
 			showCancelButton:true,
 

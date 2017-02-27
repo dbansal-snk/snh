@@ -62,8 +62,8 @@
                     <div class="control-group"id="selling_med_detais<?php echo $i;?>">
                         <label class="control-label"><?php echo get_phrase('Medicine'.$i );?></label>
                         <div class="controls" id="medicine_list">
-                            <select name="medicine_id<?php echo $i;?>" id="medicine_id<?= $i ?>" class="medicine_id" onchange="medicine.calculate_med_price(),  medicine.can_sell_loose_item(<?php echo $i; ?>), medicine.getMedicineBatchList(1);">
-                                <option value="0">--11Select Medicine--</option>
+                            <select name="medicine_id<?php echo $i;?>" id="medicine_id<?php echo $i; ?>" class="medicine_id" onchange="medicine.calculate_med_price(),  medicine.can_sell_loose_item(<?php echo $i; ?>), medicine.getMedicineBatchList(<?php echo $i; ?>);">
+                                <option value="0">--Select Medicine--</option>
                                 <?php
                                 $medicine	= get_medicine_list();
                                 foreach($medicine as $row):
@@ -74,15 +74,17 @@
                                 ?>
 
                             </select>
+                            <?php if($j!=0){ ?>
                             <div id="<?php echo $i;?>" class="removeMedicine" onclick="medicine.remove_medicine_container(<?php echo $i;?>);"></div>
+                            <?php }?>
                         </div>
                     </div>
 
                     <div id="med_details_container">
                     <div class="control-group">
-                        <label class="control-label">Batch<?= $i ?></label>
+                        <label class="control-label">Batch<?php echo $i; ?></label>
                         <div class="controls" id="batch_list">
-                            <select class="batch_id"  name="batch_id<?php echo $i;?>" id="batch_id<?= $i ?>">
+                            <select class="batch_id"  name="batch_id<?php echo $i;?>" id="batch_id<?php echo $i; ?>">
                             <option value="<?php echo $edit_profile[$j]['batch']; ?>"> <?php echo $edit_profile[$j]['batch']; ?></option>
                             </select>
                         </div>
@@ -91,14 +93,14 @@
                     <div class="control-group loose_med_option<?php echo $i; ?>" id="loose_quantity_element<?php echo $i; ?>">
                         <label class="control-label"><?php echo get_phrase('selling_loose_quantity'.$i);?></label>
                         <div class="controls">
-                            <input type="checkbox" <?php if($edit_profile[$j]['is_loose_sale']==1){echo "checked";} ?> id="selling_loose_quantity<?= $i ?>" name="selling_loose_quantity<?php echo $i;?>" onchange="medicine.calculate_med_price();"/>
+                            <input type="checkbox" <?php if($edit_profile[$j]['is_loose_sale']==1){echo "checked";} ?> id="selling_loose_quantity<?php echo $i; ?>" name="selling_loose_quantity<?php echo $i;?>" onchange="medicine.calculate_med_price();"/>
                         </div>
                     </div>
 
                     <div class="control-group">
                         <label class="control-label"><?php echo get_phrase('Quantity'.$i);?></label>
                         <div class="controls">
-                            <input value="<?php echo $edit_profile[$j]['quantity'];?>" type="number" id="med_quantity<?= $i ?>" class="validate[required]" name="quantity<?php echo $i;?>" onkeyup="medicine.calculate_med_price();"/>
+                            <input value="<?php echo $edit_profile[$j]['quantity'];?>" type="number" id="med_quantity<?php echo $i; ?>" class="validate[required]" name="quantity<?php echo $i;?>" onkeyup="medicine.calculate_med_price();"/>
                         </div>
                     </div>
 
@@ -110,10 +112,6 @@
                     </div>
                 </div>
 
-                <div class="control-group">
-                    <div class="addMedicine" onclick="medicine.add_medicine_container();"></div>
-                    <div class="addMedicineText" onclick="medicine.add_medicine_container();"><?php echo get_phrase('Add_Medicine');?></div>
-                </div>
 
                 <input type="hidden" id="total_med_details" name="total_med_details" value="<?php echo $i;?>">
 
@@ -131,6 +129,11 @@
             <?php
             $i++;
                 } ?>
+            <div class="control-group">
+                <div class="addMedicine" onclick="medicine.add_medicine_container();"></div>
+                <div class="addMedicineText" onclick="medicine.add_medicine_container();"><?php echo get_phrase('Add_Medicine');?></div>
+            </div>
+
             <div class="control-group">
                    <label class="control-label"><?php echo get_phrase('Discount');?></label>
                    <div class="controls">

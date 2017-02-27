@@ -5,4 +5,4 @@
 
 } );
 
-jQuery('body').on('click','.delete',function(eve){	var currentRow=$(this).closest("tr");	var cmpname=currentRow.find(".cname").html();	eve.preventDefault();	var deleteLink = jQuery(this).attr('data-delete');	swal({  	title: '',			text: "Are you sure want to delete medicine stock ! " +cmpname,  	type: 'warning',			showCancelButton:true,			showConfirmButton:true,  },  function(){			window.location.href = deleteLink;});});</script>
+jQuery('body').on('click','.delete',function(eve){	var currentRow=$(this).closest("tr");	var cmpname=currentRow.find(".cname").html();	eve.preventDefault();	var deleteLink = jQuery(this).attr('data-delete');	swal({  	title: '',			text: "Are you sure want to delete medicine stock " +cmpname+" ?",  	type: 'warning',			showCancelButton:true,			showConfirmButton:true,  },  function(){			window.location.href = deleteLink;});});</script>

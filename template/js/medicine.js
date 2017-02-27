@@ -57,10 +57,9 @@ medicine = function() {
 	}
 
 	function add_medicine_container() {
-
 		var labelCount = $("[id*='selling_med_detais']").length + 1;
 		// keep the medicine details count in the hidden parameter
-		$('#total_med_details').val(labelCount);
+
 
 
 		var seprator = $('<div>').attr({
@@ -217,18 +216,42 @@ medicine = function() {
 		}).appendTo(ainnerDiv);
 
 		aouterDiv.appendTo('#med_details_container');
+		remove_delete_button();
 	}
 
+
+	function remove_delete_button(id){
+		var labelCount = $("[id*='selling_med_detais']").length;
+			$('#total_med_details').val(labelCount);
+			for(var j=1;j<=$('#total_med_details').val();j++)
+			{
+				if($('#total_med_details').val() > 1)
+				{
+						// $('#'+j).show();
+						// $('.removeMedicine').show();
+						// $('.removeMedicine').addClass('show').removeClass('hide');
+				}
+				else
+				{
+					// alert(id);
+					// $('.removeMedicine').addClass('hide').removeClass('show');
+
+					// $('.removeMedicine').hide();
+					// $('#'+j).hide();
+				}
+		}
+	}
 	function remove_medicine_container(id) {
 		var remove_amt = $("input[id='med_amount"+id+"']").val();
 		var total_amount = 0;
 		$('*[id*=sold_med_details' + id + ']:visible').each(function() {
 			$(this).remove();
 		});
-		var current_total_amt = $("input[name='total_amount']").val();
-		var input_total_amt = (current_total_amt-remove_amt);
-
-		$("input[name='total_amount']").val(parseFloat(input_total_amt).toFixed(2));
+		// var current_total_amt = $("input[name='total_amount']").val();
+		// var input_total_amt = (current_total_amt-remove_amt);
+		//
+		// $("input[name='total_amount']").val(parseFloat(input_total_amt).toFixed(2));
+		calculate_med_price();
 
 
 
