@@ -172,7 +172,6 @@ class MY_Model extends CI_Model {
 		{
 			return $filterExp;
 		}
-        log_message('error', '>>>>>>>>>>>>>>>>>>>>>>'.print_r($this->_filterExpArray, 1));
     }
 
      /**

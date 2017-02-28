@@ -142,14 +142,14 @@ ReportTable = function() {
         return domEl;
     }
 
-    function getReportConfig(url) {
+    function getReportConfig(configUrl, listUrl, tableId) {
         var data = {};
         $.ajax({
-            url: url,
+            url: configUrl,
             success: function(response){
                 data.report_config = response;
                 data.columns       = getReportColumns(response.content.columns);
-                loadTableData('medicine_stock_report', 'index.php?pharmacist/medicine_stock_report_list', data, data.columns);
+                loadTableData(tableId, listUrl, data, data.columns);
             }
         });
 
@@ -162,6 +162,7 @@ ReportTable = function() {
             columns.push(key);
         });
         
+        
         return columns;
     }
 
@@ -170,8 +171,8 @@ ReportTable = function() {
         init: function() {
             
         }, 
-        getReportConfig: function(url) {
-            return getReportConfig(url);
+        getReportConfig: function(configUrl, listUrl, tableId) {
+            return getReportConfig(configUrl, listUrl, tableId);
         },
         loadTableData: function(tableId, url, data, columns) {
             loadTableData(tableId, url, data, columns);

@@ -42,11 +42,10 @@
 
 <script>
 $(document).ready( function () {
-    
-    var data = {};
-    var columns = {};
     var configUrl = 'index.php?pharmacist/get_med_report_config';
-    ReportTable.getReportConfig(configUrl);
+    var listUrl   = 'index.php?pharmacist/medicine_stock_report_list';
+    var tableId   = 'medicine_stock_report';
+    ReportTable.getReportConfig(configUrl, listUrl, tableId);
   
 } );
 </script>
