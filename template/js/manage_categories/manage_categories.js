@@ -1,7 +1,7 @@
 manage_category = function() {
+    
     var addMedUrl = 'index.php?pharmacist/manage_medicine_category/create';
-    function addMedicine()
-    {
+    function addMedicine() {
 //        var formDetails = $('#add_medicine').serializeArray();
 var name = $('#add_medicine #name').val();
 var desc = $('#add_medicine #description').val();
@@ -17,9 +17,9 @@ var desc = $('#add_medicine #description').val();
                     location.reload();
                 }
             }
-        });   
+        });
     }
-    
+
     function updateMedicine()
     {
         var formDetails = $('#update_medicine').serializeArray();
@@ -35,14 +35,14 @@ var desc = $('#add_medicine #description').val();
                     window.location.href = 'index.php?pharmacist/manage_medicine_category';
                 }
             }
-        });   
+        });
     }
-    
+
     return {
         addMedicine: function() {
             addMedicine();
         },
-        
+
         updateMedicine: function() {
             updateMedicine();
         }

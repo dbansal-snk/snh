@@ -38,8 +38,8 @@ medicine = function() {
             var discount      =  $('#discount').val();
             var totalDiscount = 0;
             if ($.isNumeric(discount) == true && discount > 0) {
-                totalDiscount = ((totalAmount*discount)/100).toFixed(2);
-                totalAmount   = totalAmount - totalDiscount;
+				totalDiscount = ((totalAmount * discount) / 100).toFixed(2);
+				totalAmount = (totalAmount - totalDiscount).toFixed(2);
             }
 
             $('#total_amount').val(totalAmount);
@@ -89,6 +89,7 @@ medicine = function() {
         }).appendTo(mouterDiv);
 
         $('<select>').attr({
+			class:'medicine_id',
             id: 'medicine_id' + labelCount,
             name: 'medicine_id' + labelCount,
             onchange: 'medicine.calculate_med_price(), medicine.can_sell_loose_item(' + labelCount +'), medicine.getMedicineBatchList(' + labelCount +');',
@@ -96,11 +97,12 @@ medicine = function() {
 
         mouterDiv.appendTo('#med_details_container');
 
+		$('select.medicine_id').select2();
          $('<option>').val(0).text('--Select Medicine--').appendTo('#medicine_id' + labelCount);
 
-        $.each (medicineList, function( key, value ) {
+		$.each(medicineList, function(key, value) {
             if ('undefined' != typeof value && '' != value) {
-                $('<option>').val(key).text(value).appendTo('#medicine_id' + labelCount);
+				$('<option>').val(medicineListOPtion[key]).text(value).appendTo('#medicine_id' + labelCount);
             }
         });
 
@@ -133,7 +135,7 @@ medicine = function() {
         $('<div>').attr({
             id: labelCount,
             class: 'removeMedicine',
-            onclick: 'medicine.remove_medicine_container(' + labelCount +');'
+			onclick: 'medicine.remove_medicine_container(' + labelCount + ');'
         }).appendTo(minnerDiv);
 
 
@@ -214,14 +216,31 @@ medicine = function() {
         }).appendTo(ainnerDiv);
 
         aouterDiv.appendTo('#med_details_container');
+		remove_delete_button();
+	}
 
+	function remove_delete_button(id){
+		var labelCount = $("[id*='selling_med_detais']").length;
+			$('#total_med_details').val(labelCount);
+			for(var j=1;j<=$('#total_med_details').val();j++)
+			{
+				if($('#total_med_details').val() > 1)
+				{
+						// $('#'+j).show();
+						// $('.removeMedicine').show();
+						// $('.removeMedicine').addClass('show').removeClass('hide');
     }
 
-    function remove_medicine_container(id)
-    {
-        $('*[id*=sold_med_details'+ id +']:visible').each(function() {
+		}
+	}
+	function remove_medicine_container(id) {
+		var remove_amt = $("input[id='med_amount"+id+"']").val();
+		var total_amount = 0;
+		$('*[id*=sold_med_details' + id + ']:visible').each(function() {
            $(this).remove();
         });
+		
+		calculate_med_price();
 
         // keep the medicine details count in the hidden parameter
         var labelCount = $("[id*='selling_med_detais']").length;
@@ -271,7 +290,7 @@ medicine = function() {
         $('.loader').show();
         var totalSellingMedCount = $("[id*='selling_med_detais']").length;
         var erroMessage = '';
-        for (var i=1; i<=totalSellingMedCount; i++) {
+		for (var i = 1; i <= totalSellingMedCount; i++) {
             var selectedMedValue = $('#medicine_id' + i).val();
             var medQuantity      = $('#med_quantity' + i).val();
             if (selectedMedValue == 0) {
@@ -292,8 +311,7 @@ medicine = function() {
         }
     }
 
-    function validate_medicine_stock_form()
-    {
+	function validate_medicine_stock_form() {
         var errorMessage = '';
 
         if ($('#medicine_id').val() == 0) {
@@ -462,10 +480,51 @@ medicine = function() {
         }
     }
 
+	function validat_medicine_sale_form() {
+		var totalSellingMedCount = $("[id*='selling_med_detais']").length;
+		var erroMessage = '';
+		for (var i = 1; i <= totalSellingMedCount; i++) {
+			var selectedMedValue = $('#medicine_id' + i).val();
+			if (selectedMedValue == 0) {
+				erroMessage += 'Please select Medicine' + i + '\n';
+			}
+		}
+
+		if ('' != erroMessage) {
+			alert(erroMessage);
+			return false;
+		} else {
+			updateMedicine();
+		}
+	}
+
+
+	function updateMedicine()
+	{
+
+					var formDetails = $('#update_medicine').serializeArray();
+					$.ajax({
+									type: 'POST',
+									url: 'index.php?pharmacist/update',
+									data: formDetails,
+									success: function(response)
+									{
+													if ('undefined' != typeof response.content.error && true == response.content.error) {
+																	alert(response.content.message);
+	return false;
+													} else {
+																	window.location.href = 'index.php?pharmacist/manage_prescription';
+													}
+									}
+					});
+	}
     return {
         calculate_med_price : function() {
             calculate_med_price();
         },
+		updateMedicine: function() {
+						updateMedicine();
+		},
 
         get_loose_item_derails : function() {
             get_loose_item_derails();
@@ -486,6 +545,9 @@ medicine = function() {
         validate_medicine_sale_form : function() {
             validate_medicine_sale_form();
         },
+		validat_medicine_sale_form: function() {
+			validat_medicine_sale_form();
+		},
 
         validate_medicine_stock_form : function() {
             return validate_medicine_stock_form();
@@ -507,4 +569,6 @@ medicine = function() {
             window.print();
         }
     }
+
+
 }();

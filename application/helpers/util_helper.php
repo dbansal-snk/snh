@@ -1,7 +1,5 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-if ( ! function_exists('get_medicine_mrp')) {
-
 	function get_medicine_mrp() {
 
 		$CI	=&	get_instance();
@@ -25,19 +23,20 @@ if ( ! function_exists('get_medicine_mrp')) {
 		$data = $CI->db->get('medicine_category')->result_array();
         return $data;
 	}
-    
+
     function get_vendors_list() {
 
-		$CI	=&	get_instance();
-		$CI->load->database();
+        $CI	=&	get_instance();
+        $CI->load->database();
 
         $CI->db->select(array('name', 'id'));
         $CI->db->where('status', 'ACTIVE');
         $CI->db->order_by('name', 'asc');
+
 		$data = $CI->db->get('vendors')->result_array();
         return $data;
 	}
-    
+
     function get_company_list() {
 
 		$CI	=&	get_instance();
@@ -45,6 +44,8 @@ if ( ! function_exists('get_medicine_mrp')) {
 
         $CI->db->select(array('name', 'id'));
         $CI->db->where('status', 'ACTIVE');
+								$CI->db->order_by("name", "ASC");
+
 		$data = $CI->db->get('manufacture_company')->result_array();
         return $data;
 	}
@@ -59,4 +60,4 @@ if ( ! function_exists('get_medicine_mrp')) {
 		$data = $CI->db->get('medicine_category')->result_array();
         return $data;
 	}
-}
+

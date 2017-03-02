@@ -25,7 +25,7 @@
                     	</a></li>
 
             <?php endif;?>
-
+<?php if(!isset($edit_profile)):?>
 			<li class="<?php if(!isset($edit_profile))echo 'active';?>">
 
             	<a href="#list" data-toggle="tab"><i class="icon-align-justify"></i>
@@ -38,7 +38,7 @@
             <li>
             	<a href="#add" data-toggle="tab"><i class="icon-plus"></i><?php echo get_phrase('sold_to_patient');?></a>
             </li>
-
+  <?php endif;?>
 		</ul>
 
     	<!------CONTROL TABS END------->
@@ -53,128 +53,127 @@
 
         	<!----EDITING FORM STARTS---->
 
-        	<?php if(isset($edit_profile)):?>
+        	<?php if(isset($edit_profile)):
+            ?>
 
 			<div class="tab-pane box active" id="edit" style="padding: 5px">
-
                 <div class="box-content">
 
-                	<?php foreach($edit_profile as $row):?>
+                    <form method="post" action="<?php echo base_url();?>index.php?pharmacist/manage_prescription/edit/do_update/<?php echo $edit_profile[0]->medicine_sale_id;?>" class="form-horizontal validatable">
+                      <!-- <input type="hidden" id="mid" name="mid" value="<?php //echo $edit_profile[0]->medicine_sale_id;?>"> -->
 
-                    <form method="post" action="<?php echo base_url();?>index.php?pharmacist/manage_prescription/edit/do_update/<?php echo $row['prescription_id'];?>" class="form-horizontal validatable">
+  <?php
+                            $medicine_price_details = get_medicine_mrp();
+                    ?>
 
                         <div class="padded">
 
                             <div class="control-group">
-
-                                <label class="control-label"><?php echo get_phrase('doctor');?></label>
+                                <label class="control-label"><?php echo get_phrase('Patient_Name');?></label>
 
                                 <div class="controls">
+                                    <input type="text" id="patient_name" name="patient_name" value="<?php echo $edit_profile['0']->patient_name;?>"/>
+                                </div>
+                            </div>
+                            <?php
+                             $i=1;
+                            foreach ($edit_profile as $key => $value) {
 
-									<?php echo $this->crud_model->get_type_name_by_id('doctor',$row['doctor_id'],'name');?>
+                             ?>
+                             <input type="hidden" id="md_id" name="md_id[]" value="<?php echo $value->id;?>">
+                            <div id="med_details_container">
+                                <div class="control-group"id="selling_med_detais">
+                                    <label class="control-label"><?php echo get_phrase('Medicine'.$i );?></label>
+                                    <div class="controls" id="medicine_list">
+                                        <select name="medicine_id" id="medicine_id<?= $i ?>" class="medicine_id" onchange="medicine.calculate_med_price(), medicine.can_sell_loose_item(1), medicine.getMedicineBatchList(1);">
+                                            <option value="0">--Select Medicine--</option>
+                                            <?php
+                                            $medicine	= get_medicine_list();
+                                            foreach($medicine as $row):
+                                            ?>
+                                                <option <?php  if($value->medicine_id==$row['medicine_category_id']){echo "selected";} ?> value="<?php echo $row['medicine_category_id'];?>"><?php echo $row['name'];?></option>
+                                            <?php
+                                            endforeach;
+                                            ?>
 
+                                        </select>
+                                </div>
+                            </div>
+
+                                <div id="med_details_container">
+                            <div class="control-group">
+                                    <label class="control-label">Batch<?= $i ?></label>
+                                    <div class="controls" id="batch_list">
+                                        <select   name="batch_id[]" id="batch_id<?= $i ?>">
+                                        <option value=""> <?php echo $value->batch; ?></option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="control-group" id="loose_quantity_element1">
+                                    <label class="control-label"><?php echo get_phrase('selling_loose_quantity'.$i);?></label>
+                                <div class="controls">
+                                        <input type="checkbox" <?php if($value->is_loose_sale==1){echo "checked";} ?> id="selling_loose_quantity<?= $i ?>" name="selling_loose_quantity[]" onchange="medicine.calculate_med_price();"/>
+                                </div>
+                            </div>
+
+                            <div class="control-group">
+                                    <label class="control-label"><?php echo get_phrase('Quantity'.$i);?></label>
+                                <div class="controls">
+                                        <input value="<?php echo $value->quantity;?>" type="number" id="med_quantity<?= $i ?>" class="validate[required]" name="quantity[]" onkeyup="medicine.calculate_med_price();"/>
                                 </div>
 
                             </div>
 
                             <div class="control-group">
-
-                                <label class="control-label"><?php echo get_phrase('patient');?></label>
-
+                                    <label class="control-label"><?php echo get_phrase('Amount'.$i);?></label>
                                 <div class="controls">
-
-                                    <?php echo $this->crud_model->get_type_name_by_id('patient',$row['patient_id'],'name');?>
-
+                                        <input value="<?php echo $value->amount;?>" type="text" id="med_amount1" readonly="readonly" name="amount1"/>
                                 </div>
-
+                                </div>
                             </div>
 
                             <div class="control-group">
-
-                                <label class="control-label"><?php echo get_phrase('case_history');?></label>
-
-                                <div class="controls">
-
-                                    <?php echo $row['case_history'];?>
-
-                                </div>
-
+                                <div class="addMedicine" onclick="medicine.add_medicine_container();"></div>
+                                <div class="addMedicineText" onclick="medicine.add_medicine_container();"><?php echo get_phrase('Add_Medicine');?></div>
                             </div>
 
-                            <div class="control-group">
+                            <input type="hidden" id="total_med_details" name="total_med_details" value="1">
 
-                                <label class="control-label"><?php echo get_phrase('medication');?></label>
-
+                        </div>
+                        <?php
+                        $i++;
+                            } ?>
+                        <div class="control-group">
+                               <label class="control-label"><?php echo get_phrase('Discount');?></label>
                                 <div class="controls">
-
-                                    <?php echo $row['medication'];?>
-
-                                </div>
-
-                            </div>
-
-                            <div class="control-group">
-
-                                <label class="control-label"><?php echo get_phrase('medication_from_pharmacist');?></label>
-
-                                <div class="controls">
-
-                                    <div class="box closable-chat-box">
-
-                                        <div class="box-content padded">
-
-                                                <div class="chat-message-box">
-
-                                                <textarea name="medication_from_pharmacist" id="ttt" rows="5"
-
-                                                	placeholder="<?php echo get_phrase('add_description');?>"><?php echo $row['medication_from_pharmacist'];?></textarea>
-
+                                   <input type="number" value="<?php echo $value->discount;?>" id="discount" min="0" step="0.1" name="discount" onkeyup="medicine.calculate_med_price();"/>
                                                 </div>
-
                                         </div>
 
-                                    </div>
 
+                            <div class="control-group">
+                           <label class="control-label"><?php echo get_phrase('total_amount');?></label>
+                                <div class="controls">
+                               <input type="text" value="<?php echo $edit_profile['0']->total_amount;?>"  id="total_amount" readonly="readonly"  name="total_amount"/>
                                 </div>
-
                             </div>
 
                             <div class="control-group">
-
-                                <label class="control-label"><?php echo get_phrase('description');?></label>
-
+                            <label class="control-label">Selling Date</label>
                                 <div class="controls">
-
-                                    <?php echo $row['description'];?>
-
+                                <input type="text" id="selling_date"  class="datepicker" value="<?php echo $edit_profile['0']->amount;?>"  name="selling_date" />
                                 </div>
-
-                            </div>
-
-                            <div class="control-group">
-
-                                <label class="control-label"><?php echo get_phrase('date');?></label>
-
-                                <div class="controls">
-
-                                    <?php echo date('m/d/Y', $row['creation_timestamp']);?>
-
-                                </div>
-
-                            </div>
-
                         </div>
 
                         <div class="form-actions">
 
-                            <button type="submit" class="btn btn-blue"><?php echo get_phrase('edit_prescription');?></button>
+                        <button type="submit" class="btn btn-blue" id="save_prescribed_details"><?php echo get_phrase('Update');?></button>
 
                         </div>
 
-                    <?php echo form_close();?>
-
-                    <?php endforeach;?>
-
+                </div>
+                    </form>
                 </div>
 
 			</div>
@@ -205,24 +204,30 @@
 					</thead>
 
                     <tbody>
+
                     	<?php $count = 1;foreach($prescriptions as $row):?>
 
                         <tr>
-							<td><?php echo $row['patient_name'];?></td>
+							<td class="cname"><?php echo $row['patient_name'];?></td>
                             <td><?php echo $row['name']; ?></td>
                             <td><?php echo $row['quantity'];?></td>
                             <td><?php echo number_format($row['total_amount'], 2);?></td>
                             <td><?php echo $row['medicine_sold_date'];?></td>
 							<td align="center">
-                            	<a href="<?php echo base_url();?>index.php?pharmacist/manage_prescription/edit/<?php echo $row['id'];?>"
+                            	<a href="<?php echo base_url();?>index.php?pharmacist/edit_sell/<?php echo $row['id'];?>"
                                 	rel="tooltip" data-placement="top" data-original-title="<?php echo get_phrase('edit');?>" class="btn btn-blue">
                                 		<i class="icon-wrench"></i>
                                 </a>
 
-                            	<a href="<?php echo base_url();?>index.php?pharmacist/manage_prescription/delete/<?php echo $row['id'];?>" onclick="return confirm('delete?')"
-                                	rel="tooltip" data-placement="top" data-original-title="<?php echo get_phrase('delete');?>" class="btn btn-red">
+                            	<a href="javascript:;"
+													data-delete = "<?php echo base_url();?>index.php?pharmacist/manage_prescription/delete/<?php echo $row['id'];?>"
+                                	rel="tooltip" data-placement="top" data-original-title="<?php echo get_phrase('delete');?>" class="btn btn-red delete">
                                     <i class="icon-trash"></i>
                                 </a>
+                            	<!-- <a href="<?php echo base_url();?>index.php?pharmacist/manage_prescription/delete/<?php echo $row['id'];?>" onclick="return confirm('delete?')"
+                                	rel="tooltip" data-placement="top" data-original-title="<?php echo get_phrase('delete');?>" class="btn btn-red">
+                                    <i class="icon-trash"></i>
+                                </a> -->
 
                                 <a href="javascript: void(0);" onclick="medicine.generate_medicine_bill(<?php echo $row['id'];?>);"
                                 	rel="tooltip" data-placement="top" data-original-title="Print Bill" class="btn btn-blue">
@@ -265,7 +270,7 @@
                                 <div class="control-group"id="selling_med_detais">
                                     <label class="control-label"><?php echo get_phrase('Medicine1');?></label>
                                     <div class="controls" id="medicine_list">
-                                        <select name="medicine_id1" id="medicine_id1" onchange="medicine.calculate_med_price(), medicine.can_sell_loose_item(1), medicine.getMedicineBatchList(1);">
+                                        <select name="medicine_id1" id="medicine_id1" class="medicine_id" onchange="medicine.calculate_med_price(), medicine.can_sell_loose_item(1), medicine.getMedicineBatchList(1);">
                                             <option value="0">--Select Medicine--</option>
                                             <?php
                                             $medicine	= get_medicine_list();
@@ -361,6 +366,8 @@
     var medicine_price_details = [];
     var loose_item_mrp = [];
     var medicineList = [];
+    var medicineListOPtion = [];
+
     var medicine_loose_item_info = [];
     <?php if (is_array($medicine_price_details) && count($medicine_price_details) > 0) {
      foreach ($medicine_price_details as $med_row) {
@@ -371,11 +378,12 @@
      <?php }} ?>
 
     <?php
+     $medicine	= get_medicine_list();
     if (is_array($medicine) && count($medicine) > 0) {
-        foreach ($medicine as $medecine_row) {
-            $medcine_name = str_replace('"', '\"', $medecine_row['name']);
+         foreach ($medicine as $key =>$medecine_row) {
            ?>
-           medicineList[<?php echo $medecine_row['medicine_category_id'] ?>] = "<?php echo $medcine_name; ?>";
+           medicineListOPtion[<?php echo $key; ?>] = "<?php echo $medecine_row['medicine_category_id']; ?>";
+            medicineList[<?php echo $key; ?>] = "<?php echo $medecine_row['name']; ?>";
     <?php
         }
     } ?>
@@ -391,7 +399,7 @@ $(document).ready( function () {
         ]
     });
 });
-
+$(".medicine_id").select2();
 $( "#save_prescribed_details" ).click(function() {
   medicine.validate_medicine_sale_form();
 });
@@ -404,4 +412,25 @@ $( "#save_prescribed_details" ).click(function() {
 
 // set the curent date in seeling_date field
 $("#selling_date").datepicker('setDate', new Date());
+
+jQuery('body').on('click','.delete',function(eve){
+ var currentRow=$(this).closest("tr");
+var cmpname=currentRow.find(".cname").html();
+	eve.preventDefault();
+	var deleteLink = jQuery(this).attr('data-delete');
+	swal({
+  	title: '',
+			text: "Are you sure want to delete sell medicine patient "+ cmpname +" ?",
+  	type: 'warning',
+			showCancelButton:true,
+
+			showConfirmButton:true,
+  },
+  function(){
+
+			window.location.href = deleteLink;
+});
+
+});
+
 </script>

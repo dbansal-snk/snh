@@ -24,7 +24,7 @@ class Pharmacist_model extends MY_Model
         $this->_table_vendors               = 'vendors';
         $this->_table_manufacture_company   = 'manufacture_company';
 	}
-    
+
     public function get_sold_medicine_details($medicine_sale_id = null, $columns = array())
     {
         if (is_array($columns) && count($columns) > 0) {
@@ -33,37 +33,38 @@ class Pharmacist_model extends MY_Model
             $this->db->select('GROUP_CONCAT(' . $this->_medicine_category . '.name) as name');
             $this->db->select('GROUP_CONCAT(' . $this->_medicine_sale_details . '.quantity) as quantity');
             $this->db->select($this->_medicine_sale . '.*');
+             $this->db->where_in($this->_medicine_sale_details . '.is_deleted','0');
             $this->db->group_by($this->_medicine_sale_details . '.medicine_sale_id');
         }
-        
+
         $this->db->join($this->_medicine_sale_details, $this->_medicine_sale_details . '.medicine_sale_id = ' . $this->_medicine_sale . '.id', 'INNER');
         $this->db->join($this->_medicine_category, $this->_medicine_category . '.medicine_category_id = ' . $this->_medicine_sale_details . ' .medicine_id', 'INNER');
-        
+
         if (!empty($medicine_sale_id)) {
             $this->db->where($this->_medicine_sale . '.id', $medicine_sale_id);
             $this->db->join($this->_medicine_stock, $this->_medicine_stock . '.medicine_category_id = ' . $this->_medicine_sale_details . ' .medicine_id AND '
                 . '' . $this->_medicine_stock . '.is_latest_stock = 1', 'INNER');
-        
+
             $this->db->group_by($this->_medicine_sale_details . '.id');
         }
-        
+
         $this->db->order_by($this->_medicine_sale . '.create_date', 'DESC');
         $data = $this->db->get($this->_medicine_sale)->result_array();
-        
+
         return $data;
     }
-    
+
     public function med_sold_to_patient($data)
     {
         $this->db->insert($this->_medicine_sale, $data);
         return $this->db->insert_id();
     }
-    
+
     public function med_details_sold_to_patient($data)
     {
         $this->db->insert_batch($this->_medicine_sale_details, $data);
     }
-    
+
     public function mark_obsolete_to_old_med_stock($medicine_cat_id)
     {
         if (!empty($medicine_id)) {
@@ -74,6 +75,7 @@ class Pharmacist_model extends MY_Model
     }
     
     public function get_medicine_revenue($medicine_ids = array(), $pagination = array())
+
     {
         $this->db->select(array($this->_medicine_category . '.name', $this->_medicine_stock . '.loose_item_quantity'));
         $this->db->select('SUM(' . $this->_medicine_stock . '.quantity) as total_stock');
@@ -84,7 +86,7 @@ class Pharmacist_model extends MY_Model
         if (is_array($medicine_ids) && count($medicine_ids) > 0) {
             $this->db->where_in($this->_medicine_stock . '.medicine_category_id', $medicine_ids);
         }
-        
+
         $this->db->group_by($this->_medicine_category . '.medicine_category_id');
         $this->db->limit($pagination['offset'], $pagination['start']);
 
@@ -93,9 +95,10 @@ class Pharmacist_model extends MY_Model
         }
         
         $data = $this->db->get($this->_medicine_category)->result_array();
+
         return $data;
     }
-    
+
     public function get_sold_stock_of_medicine($medicine_ids = array())
     {
         $this->db->select('SUM(quantity) as sold_stock'); // this is a sold stock
@@ -106,21 +109,21 @@ class Pharmacist_model extends MY_Model
             $this->db->join($this->_medicine_category, $this->_medicine_category . '.medicine_category_id = ' . $this->_medicine_sale_details . '.medicine_id', 'INNER');
             $this->db->where_in($this->_medicine_sale_details . '.medicine_id', $medicine_ids);
         }
-        
+
         $this->db->group_by($this->_medicine_sale_details . '.medicine_id');
         $data = $this->db->get($this->_medicine_sale_details)->result_array();
-        
+
         return $data;
     }
-    
+
     public function get_all_medicine_revenue()
     {
         $this->db->select('SUM(' . $this->_medicine_sale_details . '.amount) as total_amount');
         $data = $this->db->get($this->_medicine_sale_details)->result_array();
-        
+
         return $data;
     }
-    
+
     public function get_medicine_stock_details($medicine_id)
     {
         $data = array();
@@ -131,30 +134,30 @@ class Pharmacist_model extends MY_Model
             $this->db->where('is_latest_stock', 1);
             $data = $this->db->get($this->_medicine_stock)->result_array();
         }
-    
+
         return $data;
     }
-    
+
     public function get_vendors_list($id = null, $show_active_list = false) {
         if (!empty($id)) {
             $this->db->where('id', $id);
         }
-        
+
         if (!empty($show_active_list)) {
             $this->db->where('status', self::STATUS_ACTIVE);
         }
         $this->db->order_by('name', 'asc');
         $data = $this->db->get($this->_table_vendors)->result_array();
-        
+
         return $data;
-    
+
     }
-    
+
     public function add_vendor($data)
     {
         $this->db->insert($this->_table_vendors, $data);
     }
-    
+
     public function delete_vendor($id)
     {
         if (!empty($id)) {
@@ -162,7 +165,7 @@ class Pharmacist_model extends MY_Model
             $this->db->delete($this->_table_vendors);
         }
     }
-    
+
     public function update_vendor_details($id, $data)
     {
         if (!empty($id)) {
@@ -170,40 +173,40 @@ class Pharmacist_model extends MY_Model
             $this->db->update($this->_table_vendors, $data);
         }
     }
-    
+
     public function delete_med_sold_to_patient($id)
     {
         if (!empty($id)) {
             $this->db->where('id', $id);
             $this->db->delete($this->_medicine_sale);
-            
+
             $this->db->where('medicine_sale_id', $id);
             $this->db->delete($this->_medicine_sale_details);
         }
     }
-    
-    
+
+
      public function get_manufacture_company_list($id = null, $show_active_companies = false) {
         if (!empty($id)) {
             $this->db->where('id', $id);
         }
-        
+
         if (!empty($show_active_companies)) {
             $this->db->where('status', self::STATUS_ACTIVE);
         }
-        
+
         $this->db->order_by('name', 'asc');
         $data = $this->db->get($this->_table_manufacture_company)->result_array();
-        
+
         return $data;
-    
+
     }
-    
+
     public function add_manufacture_company($data)
     {
         $this->db->insert($this->_table_manufacture_company, $data);
     }
-    
+
     public function delete_manufacture_company($id)
     {
         if (!empty($id)) {
@@ -211,7 +214,7 @@ class Pharmacist_model extends MY_Model
             $this->db->delete($this->_table_manufacture_company);
         }
     }
-    
+
     public function update_manufacture_company($id, $data)
     {
         if (!empty($id)) {
@@ -219,16 +222,16 @@ class Pharmacist_model extends MY_Model
             $this->db->update($this->_table_manufacture_company, $data);
         }
     }
-    
+
     public function get_medicine_list()
     {
         $this->db->select('IF(status = "IN_STOCK", "In Stock", IF(status = "OUT_STOCK", "Out of Stock", "Not in Stock")) as status', false);
         $this->db->select(array('name', 'description', 'medicine_category_id'));
         $data = $this->db->get($this->_medicine_category)->result_array();
-        
+
         return $data;
     }
-    
+
     public function get_medicine_batch_list($medicine_id)
     {
         $data = array();
@@ -239,7 +242,7 @@ class Pharmacist_model extends MY_Model
         }
         return $data;
     }
-    
+
     public function get_med_manufacture_details($medicine_id)
     {
         $data = array();
@@ -254,7 +257,7 @@ class Pharmacist_model extends MY_Model
 
         return $data;
     }
-    
+
     public function get_med_vendors_details($medicine_id)
     {
         $data = array();
@@ -266,10 +269,10 @@ class Pharmacist_model extends MY_Model
             $this->db->where($this->_table_vendors. '.status', self::STATUS_ACTIVE);
             $data = $this->db->get($this->_medicine_stock)->result_array();
         }
-        
+
         return $data;
     }
-    
+
     public function update_medicine_sale_cash_memo_no($sale_id, $cash_memo_no)
     {
         if (!empty($sale_id) && !empty($cash_memo_no)) {
@@ -278,7 +281,41 @@ class Pharmacist_model extends MY_Model
             $this->db->update($this->_medicine_sale, $data);
         }
     }
+
+    public function get_sell_medicine_details($medicine_sale_id = null, $columns = array())
+    {
+        $this->db->select('*');
+        $this->db->from($this->_medicine_sale);
+        $this->db->join($this->_medicine_sale_details , $this->_medicine_sale.'.id ='.$this->_medicine_sale_details.'.medicine_sale_id');
+         $this->db->where($this->_medicine_sale . '.id', $medicine_sale_id);
+         $this->db->where($this->_medicine_sale_details.'.is_deleted','0');
+        $data = $this->db->get()->result_array();
+
+        return $data;
+    }
     
+    public function update_sell_medicine($id, $data)
+    {
+        if (!empty($id)) {
+            $this->db->where('id', $id);
+            $this->db->update($this->_medicine_sale, $data);
+        }
+    }
+    
+    public function update_sell_medicine_details($id, $data)
+    {
+        if (!empty($id)) {
+            $this->db->where('id', $id);
+            $this->db->update($this->_medicine_sale_details, $data);
+        }
+    }
+    
+    public function update_med_sold_to_patient($data)
+    {
+        $this->db->insert($this->_medicine_sale_details, $data);
+        return $this->db->insert_id();
+    }
+     
     public function vendor_stock_report($vendor_id, $pagination)
     {
         $this->db->select(array($this->_medicine_category . '.name', $this->_medicine_stock . '.price'));
