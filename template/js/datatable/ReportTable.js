@@ -2,14 +2,12 @@ ReportTable = function() {
     var dataTableId;
     var _allFilterContainer = createDomEl("div",["allFiltersContainer"],null, null);
     var _filters = {};
+    var _columnDefs = [];
+    var _tableObj;
+    var _columnOrder = [];
     
     function init() {
-        
-//        var cols = getReportColumns(columns);
-//        applyFilter(tableId, data);
-//        if ('undefined' != typeof columns) {
-//            loadTable(url, columns, data);
-//        }
+
     }
     
     function loadTableData(tableId, url, data, columns) {
@@ -29,7 +27,7 @@ ReportTable = function() {
     
     function loadTable(url, cols, data) {
         dataTableId.DataTable().destroy();
-        dataTableId.DataTable( {
+        _tableObj = dataTableId.DataTable( {
             bProcessing : true,
             bServerSide: true,
             bLengthChange: false,
@@ -55,7 +53,9 @@ ReportTable = function() {
                 }
                 
                 aoData.push({'name':"filterOptions", 'value': _filters });
-            }
+            },
+            columnDefs: _columnDefs,
+            order: _columnOrder
         });
     }
     
@@ -80,11 +80,6 @@ ReportTable = function() {
             }
         });
                     
-//        optionList['name'] = 'Medicine';
-//        optionList['mrp'] = 'M.R.P';
-//        optionList['total_stock'] = 'Total Stock';
-//        optionList['remaining_stock'] = 'Remaining Stock';
-//        optionList['revenue'] = 'Revenue';
         $.each(optionList, function (value, key) {
             var option = createDomEl("option");
             option.text = key;
@@ -157,11 +152,23 @@ ReportTable = function() {
     }
     
     function getReportColumns(data) {
-        var columns = [];
+        var columns     = [];
+        var columnCount = 0;
         $.each(data, function (key, value) {
+            // hide the column in the data table if it is not required
+            if ('undefined' != typeof value.isColumn && false == value.isColumn) {
+                _columnDefs.push({'targets' : columnCount, 'visible' : false});
+                
+            }
+            
+            // sort the column by default
+            if ('undefined' != typeof value.defaultSort && true == value.defaultSort) {
+                _columnOrder.push([columnCount, value.defaultSortOrder]);   
+            }
+
             columns.push(key);
+            columnCount++;
         });
-        
         
         return columns;
     }
@@ -170,12 +177,78 @@ ReportTable = function() {
     return {
         init: function() {
             
-        }, 
+        },
         getReportConfig: function(configUrl, listUrl, tableId) {
             return getReportConfig(configUrl, listUrl, tableId);
         },
         loadTableData: function(tableId, url, data, columns) {
             loadTableData(tableId, url, data, columns);
+        },
+        getTableObj: function() {
+            return _tableObj;
         }
     }
+}();
+
+
+
+
+TableRowMenu = function() {
+	var _menuDiv =$('<div class="tableRowMenu">');
+	var timer;
+	var mouseOn = false;
+	function positionMenu(domEl) {
+
+	    var width = $(domEl).outerWidth();
+	    var height =  $(domEl).outerHeight();
+		var pos = $(domEl).position();
+		pos.top = pos.top;
+		pos.left = pos.left + (width/2);
+	    var windowWidth = $( window ).width();
+	    if (pos.left > windowWidth -60) {
+	        pos.left = pos.left - width*4 ;
+	    }
+	    $(_menuDiv).css({
+	        position:"absolute",
+	    	minWidth:   "200px",
+	        top: pos.top + "px",
+	       left: pos.left  + "px"
+	    });
+
+	}
+	function showMenu(htmlStr) {
+		$(_menuDiv).children().remove();
+		$(_menuDiv).append(htmlStr);
+		$(_menuDiv).show();
+		timer = setTimeout(function(){
+				if(!mouseOn) {
+					hideMenu() ;
+				}
+			},5000);
+		$(_menuDiv).mouseenter(function(){
+			clearTimeout(timer);
+		});
+		$(_menuDiv).mouseleave(function(){
+			hideMenu();
+		})
+	}
+
+	function hideMenu() {
+		_menuDiv.hide();
+	}
+
+	return {
+		showMenu:function(domEl,htmlStr) {
+			positionMenu(domEl);
+			showMenu(htmlStr);
+		},
+		hideMenu:function() {
+			hideMenu();
+		},
+		getElement:function() {
+			return _menuDiv;
+		}
+
+
+	}
 }();
