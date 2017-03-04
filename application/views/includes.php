@@ -15,13 +15,13 @@
 
 
 
-<script src="<?php echo base_url();?>template/js/jquery-3.1.1.min.js" type="text/javascript"></script>
+<script src="<?php echo base_url();?>template/js/datatable/ReportTable.js" type="text/javascript"></script>
 <script src="<?php echo base_url();?>template/js/bayanno.js" type="text/javascript"></script>
 <script src="<?php echo base_url();?>template/js/jquery-ui.js" type="text/javascript"></script>
 <script src="<?php echo base_url();?>template/js/snh_common.js" type="text/javascript"></script>
 <script src="<?php echo base_url();?>template/js/jquery.dataTables.js" type="text/javascript"></script>
 <script src="<?php echo base_url();?>template/bootstrap-sweetalert-master/dist/sweetalert.min.js" type="text/javascript"></script>
-
+<script src="<?php echo base_url();?>template/js/jquery-3.1.1.min.js" type="text/javascript"></script>
 <script src="<?php echo base_url();?>template/js/select2/select2.min.js" type="text/javascript"></script>
 
 <?php
