@@ -151,14 +151,32 @@ ReportTable = function() {
         return data;
     }
     
-    function getReportColumns(data) {
+    function getReportColumns(configData) {
         var columns     = [];
         var columnCount = 0;
-        $.each(data, function (key, value) {
+        $.each(configData, function (key, value) {
             // hide the column in the data table if it is not required
             if ('undefined' != typeof value.isColumn && false == value.isColumn) {
-                _columnDefs.push({'targets' : columnCount, 'visible' : false});
+                _columnDefs.push({
+                    'targets' : columnCount, 
+                    'visible' : false
+                });
                 
+                
+            } else if ('undefined' != typeof value.isLink && true == value.isLink) {
+                // create the hyperlink in the datatable
+                _columnDefs.push({
+                    'targets' : columnCount, 
+                    'visible' : true,
+                    'render': function ( data, type, row, meta ) {
+                        if(type === 'display'){
+                            var id = value.additionDetails;
+                            data = '<a href="' + value.linkUrl + encodeURIComponent(row[id]) + '">' + data + '</a>';
+                            data += '<span class""></span>';
+                        }
+                        return data;
+                    }
+                });
             }
             
             // sort the column by default
@@ -171,6 +189,10 @@ ReportTable = function() {
         });
         
         return columns;
+    }
+    
+    function reDrawDataTable() {
+        _tableObj.draw();
     }
 
     
@@ -186,6 +208,9 @@ ReportTable = function() {
         },
         getTableObj: function() {
             return _tableObj;
+        },
+        drawTable: function() {
+            reDrawDataTable();
         }
     }
 }();

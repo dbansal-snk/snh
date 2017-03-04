@@ -401,4 +401,12 @@ class Pharmacist_model extends MY_Model
             
         }
     }
+    
+    function delete_medicine($id)
+    {
+        if (!empty($id)) {
+            $this->db->where('medicine_category_id', $id);
+            $this->db->delete('medicine_category');
+        }
+    }
 }

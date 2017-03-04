@@ -11215,9 +11215,8 @@ strong,b {
 }
 
 a {
-
-	color:#78808a
-
+	/*color:#78808a*/
+    color: #53778a
 }
 
 a:hover,a:active,a:focus {

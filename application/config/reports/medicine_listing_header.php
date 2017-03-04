@@ -6,7 +6,10 @@ $config['report_columns']['medicine_listing_header'] = array(
         'isColumn'          => TRUE,
         'isFilter'          =>	TRUE,
         'defaultSort'       => TRUE,
-        'defaultSortOrder'  => 'asc'
+        'defaultSortOrder'  => 'asc',
+        'isLink'            => TRUE,
+        'linkUrl'           => 'index.php?pharmacist/manage_medicine_category/edit/',
+        'additionDetails'   => 'medicine_category_id'
 	),
     
     'description' 		=> 	array(
