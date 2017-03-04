@@ -3,73 +3,75 @@
 if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 class Pharmacist extends My_Controller
+
 {
 
-	const MED_STATUS_IN_STOCK = 'IN_STOCK';
+    const MED_STATUS_IN_STOCK = 'IN_STOCK';
     const MED_STATUS_OUT_STOCK = 'OUT_STOCK';
-	
 
-	function __construct()
-	{
+
+    function __construct()
+
+    {
         parent::__construct();
         if ($this->session->userdata('pharmacist_login') != 1) {
             redirect(base_url() . 'index.php?login', 'refresh');
         }
-        
-		$this->load->database();
+
+        $this->load->database();
         $this->load->model('pharmacist_model');
 
-		/*cache control*/
+        /*cache control*/
 
-		$this->output->set_header('Last-Modified: ' . gmdate("D, d M Y H:i:s") . ' GMT');
+        $this->output->set_header('Last-Modified: ' . gmdate("D, d M Y H:i:s") . ' GMT');
 
-		$this->output->set_header('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
+        $this->output->set_header('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
 
-		$this->output->set_header('Pragma: no-cache');
+        $this->output->set_header('Pragma: no-cache');
 
-		$this->output->set_header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+        $this->output->set_header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
 
-	}
+    }
 
-	
 
-	/***Default function, redirects to login page if no admin logged in yet***/
 
-	public function index()
-	{
-		if ($this->session->userdata('pharmacist_login') != 1)
+    /***Default function, redirects to login page if no admin logged in yet***/
 
-			redirect(base_url() . 'index.php?login', 'refresh');
+    public function index()
 
-		if ($this->session->userdata('pharmacist_login') == 1)
+    {
 
-			redirect(base_url() . 'index.php?pharmacist/dashboard', 'refresh');
+        if ($this->session->userdata('pharmacist_login') != 1)
 
-	}
+            redirect(base_url() . 'index.php?login', 'refresh');
 
-	
+        if ($this->session->userdata('pharmacist_login') == 1)
 
-	/***pharmacist DASHBOARD***/
+            redirect(base_url() . 'index.php?pharmacist/dashboard', 'refresh');
 
-	function dashboard()
-	{
-		$page_data['page_name']  = 'dashboard';
-		$page_data['page_title'] = get_phrase('pharmacist_dashboard');
-		$this->load->view('index', $page_data);
-        
-	}
+    }
 
-	
 
-	/****MANAGE MEDICINE CATEGORIES*********/
 
-	function manage_medicine_category($param1 = '', $param2 = '', $param3 = '')
-	{
-        log_message('error', print_r($_POST, 1));
+    /***pharmacist DASHBOARD***/
+
+    function dashboard()
+    {
+        $page_data['page_name']  = 'dashboard';
+        $page_data['page_title'] = get_phrase('pharmacist_dashboard');
+        $this->load->view('index', $page_data);
+    }
+
+
+
+    /****MANAGE MEDICINE CATEGORIES*********/
+
+    function manage_medicine_category($param1 = '', $param2 = '', $param3 = '')
+    {
         if ($param1 == 'create') {
             $result              = array();
-			$data['name']        = $this->input->post('name');
-			$data['description'] = $this->input->post('description');
+            $data['name']        = $this->input->post('name');
+            $data['description'] = $this->input->post('description');
             if (!empty($data['name'])) {
                 $this->db->insert('medicine_category', $data);
             } else {
@@ -81,10 +83,10 @@ class Pharmacist extends My_Controller
                 array('sucesss' => 1, 
                       'content' => $result)
             ));
-		}else if ($param1 == 'edit' && $param2 == 'do_update') {
+        }else if ($param1 == 'edit' && $param2 == 'do_update') {
             $result              = array();
-			$data['name']        = $this->input->post('name');
-			$data['description'] = $this->input->post('description');
+            $data['name']        = $this->input->post('name');
+            $data['description'] = $this->input->post('description');
             $medicine_id         = $this->input->post('medicine_id');
             if (!empty($data['name']) && !empty($medicine_id)) {
                 $this->db->where('medicine_category_id', $medicine_id);
@@ -93,13 +95,13 @@ class Pharmacist extends My_Controller
                 $result['error'] = true;
                 $result['message'] = 'Please type the medicine name.';
             }
-            
-			$this->output->set_content_type('application/json');
+
+            $this->output->set_content_type('application/json');
             $this->output->set_output(json_encode(
                 array('sucesss' => 1, 
                       'content' => $result)
             ));
-		} else {
+        } else {
              if ($param1 == 'edit') {
                 $page_data['edit_profile'] = $this->db->get_where('medicine_category', array(
                     'medicine_category_id' => $param2
@@ -120,18 +122,30 @@ class Pharmacist extends My_Controller
         }
     }
 
-	
+    function delete_medicine()
+    {
+        $id = $this->input->post('id');
+        $this->pharmacist_model->delete_medicine($id);
+        $this->output->set_content_type('application/json');
+        $this->output->set_output(json_encode(
+            array(
+                'sucesss' => 1, 
+                )
+            )
+        );
+    }
 
-	/****MANAGE MEDICINES CATEGORY WISE*********/
 
-	function manage_medicine($param1 = '', $param2 = '', $param3 = '')
-	{	
-		if ($param1 == 'create') {
+    /****MANAGE MEDICINES CATEGORY WISE*********/
+
+    function manage_medicine($param1 = '', $param2 = '', $param3 = '')
+    {	
+        if ($param1 == 'create') {
             $data['invoice_no']             = $this->input->post('invoice');
-			$data['medicine_category_id']   = $this->input->post('medicine_category_id');
-			$data['description']            = $this->input->post('description');
-			$data['price']                  = $this->input->post('price');
-			$data['manufacture_company_id']  = $this->input->post('manufacturing_company');
+            $data['medicine_category_id']   = $this->input->post('medicine_category_id');
+            $data['description']            = $this->input->post('description');
+            $data['price']                  = $this->input->post('price');
+            $data['manufacture_company_id']  = $this->input->post('manufacturing_company');
             $data['vendor_id']              = $this->input->post('vendor_name');
             $data['quantity']               = $this->input->post('quantity');
             $data['mrp']                    = $this->input->post('mrp');
@@ -144,7 +158,7 @@ class Pharmacist extends My_Controller
             $data['discount']               = $this->input->post('discount');
             $data['vat']                    = $this->input->post('vat');
             $data['free_item']              = $this->input->post('free_item');
-            
+
             if (isset($_POST['is_loose_item'])) {
                 $data['is_loose_item']       = 1;
                 $data['loose_item_quantity'] = $this->input->post('loose_item_quantity');
@@ -152,22 +166,22 @@ class Pharmacist extends My_Controller
                 $data['is_loose_item']       = 0;
                 $data['loose_item_quantity'] = 0;
             }
-            
+
             $this->pharmacist_model->mark_obsolete_to_old_med_stock($data['medicine_category_id']);
-			$this->db->insert('medicine_stock', $data);
+            $this->db->insert('medicine_stock', $data);
             $medicine_id = $this->db->insert_id();
             $this->_check_medicines_stock($data['medicine_category_id']);
-			$this->session->set_flashdata('flash_message', get_phrase('medicine_created'));
-			redirect(base_url() . 'index.php?pharmacist/manage_medicine', 'refresh');
-		}
+            $this->session->set_flashdata('flash_message', get_phrase('medicine_created'));
+            redirect(base_url() . 'index.php?pharmacist/manage_medicine', 'refresh');
+        }
 
-		if ($param1 == 'edit' && $param2 == 'do_update') {
+        if ($param1 == 'edit' && $param2 == 'do_update') {
 
             $data['invoice_no']             = $this->input->post('invoice');
-			$data['medicine_category_id']   = $this->input->post('medicine_category_id');
-			$data['description']            = $this->input->post('description');
-			$data['price']                  = $this->input->post('price');
-			$data['manufacture_company_id'] = $this->input->post('manufacturing_company');
+            $data['medicine_category_id']   = $this->input->post('medicine_category_id');
+            $data['description']            = $this->input->post('description');
+            $data['price']                  = $this->input->post('price');
+            $data['manufacture_company_id'] = $this->input->post('manufacturing_company');
             $data['vendor_id']              = $this->input->post('vendor_name');
             $data['quantity']               = $this->input->post('quantity');
             $data['mrp']                    = $this->input->post('mrp');
@@ -179,7 +193,7 @@ class Pharmacist extends My_Controller
             $data['discount']               = $this->input->post('discount');
             $data['vat']                    = $this->input->post('vat');
             $data['free_item']              = $this->input->post('free_item');
-            
+
             if (isset($_POST['is_loose_item'])) {
                 $data['is_loose_item']       = 1;
                 $data['loose_item_quantity'] = $this->input->post('loose_item_quantity');
@@ -187,114 +201,114 @@ class Pharmacist extends My_Controller
                 $data['is_loose_item']       = 0;
                 $data['loose_item_quantity'] = 0;
             }
-            
-			$this->db->where('id', $param3);
+
+            $this->db->where('id', $param3);
             $this->db->update('medicine_stock', $data);
-            
+
             $this->_check_medicines_stock($data['medicine_category_id']);
-			$this->session->set_flashdata('flash_message', get_phrase('medicine_updated'));
-			redirect(base_url() . 'index.php?pharmacist/manage_medicine', 'refresh');
+            $this->session->set_flashdata('flash_message', get_phrase('medicine_updated'));
+            redirect(base_url() . 'index.php?pharmacist/manage_medicine', 'refresh');
 
-		} else if ($param1 == 'edit') {
+        } else if ($param1 == 'edit') {
 
-			$page_data['edit_profile'] = $this->db->get_where('medicine_stock', array(
+            $page_data['edit_profile'] = $this->db->get_where('medicine_stock', array(
 
-				'id' => $param2
+                'id' => $param2
 
-			))->result_array();
-            
+            ))->result_array();
+
             if (!empty($page_data['edit_profile'][0]['manufacture_company_id'])) {
                 $page_data['manufacture_list'] = $this->pharmacist_model->get_med_manufacture_details($page_data['edit_profile'][0]['manufacture_company_id']);
                 $page_data['vendor_list']      = $this->pharmacist_model->get_med_vendors_details($page_data['edit_profile'][0]['manufacture_company_id']);
             }
-		}
+        }
 
-		if ($param1 == 'delete') {
-			$this->db->where('id', $param2);
-			$this->db->delete('medicine_stock');
-			$this->session->set_flashdata('flash_message', get_phrase('medicine_deleted'));
-			redirect(base_url() . 'index.php?pharmacist/manage_medicine', 'refresh');
+        if ($param1 == 'delete') {
+            $this->db->where('id', $param2);
+            $this->db->delete('medicine_stock');
+            $this->session->set_flashdata('flash_message', get_phrase('medicine_deleted'));
+            redirect(base_url() . 'index.php?pharmacist/manage_medicine', 'refresh');
 
-		}
+        }
 
         $page_data['company_list'] = $this->pharmacist_model->get_manufacture_company_list(null, true);
-		$page_data['page_name']  = 'manage_medicine';
+        $page_data['page_name']  = 'manage_medicine';
 
-		$page_data['page_title'] = get_phrase('manage_medicine');
-		$page_data['medicines']  = $this->pharmacist_model->get_med_stock_list();
+        $page_data['page_title'] = get_phrase('manage_medicine');
+        $page_data['medicines']  = $this->pharmacist_model->get_med_stock_list();
 
-		$this->load->view('index', $page_data);
+        $this->load->view('index', $page_data);
 
-	}
+    }
 /***UPDATE Sell MEDICINE******/
 public function edit_sell($id)
 {
 
-	
+
    $page_data['page_name']    = 'update_sell';
-			$page_data['page_title']   = 'update sell';
+            $page_data['page_title']   = 'update sell';
    $data                      = $page_data['edit_profile']=
-			$this->pharmacist_model->get_sell_medicine_details($id);
+            $this->pharmacist_model->get_sell_medicine_details($id);
 
         $page_data['update_sell'] = !empty($data[0]) ? $data[0] : null;
-								$this->load->view('index', $page_data);
+                                $this->load->view('index', $page_data);
 
 }
 public function update()
 {
-	//$mdid = $this->input->post('md_id');
-	$data = $this->input->post();
-	// 	print_r($data);
+    //$mdid = $this->input->post('md_id');
+    $data = $this->input->post();
+    // 	print_r($data);
  // exit;
 
 $check_med_remaining_stock     = $this->_check_medicine_stock($data);
 if(empty($check_med_remaining_stock)){
-			$update_data                = array();
-			$update_data1                = array();
-			$update_data['patient_name'] = $data['patient_name'];
-			$update_data['discount'] = $data['discount'];
-			$update_data['total_amount'] = $data['total_amount'];
-			$update_data['medicine_sold_date'] =date('Y-m-d H:i:s' ,strtotime($data['selling_date']));
+            $update_data                = array();
+            $update_data1                = array();
+            $update_data['patient_name'] = $data['patient_name'];
+            $update_data['discount'] = $data['discount'];
+            $update_data['total_amount'] = $data['total_amount'];
+            $update_data['medicine_sold_date'] =date('Y-m-d H:i:s' ,strtotime($data['selling_date']));
 
-			$this->pharmacist_model->update_sell_medicine($data['mid'], $update_data);
+            $this->pharmacist_model->update_sell_medicine($data['mid'], $update_data);
 
 for($i=1;$i<=15;$i++)
 {
-		if(isset($data['md_id'.$i]) &&  $data['md_id'.$i]>0)
-		{
+        if(isset($data['md_id'.$i]) &&  $data['md_id'.$i]>0)
+        {
 
-			if($data['quantity' . $i]!="")
-			{
-						$update_data1['medicine_id'] = $data['medicine_id' . $i];
-						$update_data1['batch'] = $data['batch_id'.$i];
-						$update_data1['is_loose_sale'] = !empty($data['selling_loose_quantity'.$i]) ? '1' : '0'; //$data['selling_loose_quantity'.$i];
+            if($data['quantity' . $i]!="")
+            {
+                        $update_data1['medicine_id'] = $data['medicine_id' . $i];
+                        $update_data1['batch'] = $data['batch_id'.$i];
+                        $update_data1['is_loose_sale'] = !empty($data['selling_loose_quantity'.$i]) ? '1' : '0'; //$data['selling_loose_quantity'.$i];
 
-						$update_data1['quantity'] = $data['quantity'.$i];
-						$update_data1['amount'] = $data['amount'.$i];
+                        $update_data1['quantity'] = $data['quantity'.$i];
+                        $update_data1['amount'] = $data['amount'.$i];
 
-							$this->pharmacist_model->update_sell_medicine_details($data['md_id'.$i], $update_data1);
+                            $this->pharmacist_model->update_sell_medicine_details($data['md_id'.$i], $update_data1);
 
-			}
-			else{
+            }
+            else{
 
-						$update_data1['is_deleted'] = 1;
-						$this->pharmacist_model->update_sell_medicine_details($data['md_id'.$i], $update_data1);
+                        $update_data1['is_deleted'] = 1;
+                        $this->pharmacist_model->update_sell_medicine_details($data['md_id'.$i], $update_data1);
 
 
-			}
-		}
-		else {
-			if($data['quantity' . $i]!="")
-			{
-						$update_data1['medicine_sale_id'] = $data['mid'];
-						$update_data1['medicine_id'] = $data['medicine_id' . $i];
-						$update_data1['batch'] = $data['batch_id'.$i];
-						$update_data1['is_loose_sale'] = !empty($data['selling_loose_quantity'.$i]) ? '1' : '0'; //$data['selling_loose_quantity'.$i];
+            }
+        }
+        else {
+            if($data['quantity' . $i]!="")
+            {
+                        $update_data1['medicine_sale_id'] = $data['mid'];
+                        $update_data1['medicine_id'] = $data['medicine_id' . $i];
+                        $update_data1['batch'] = $data['batch_id'.$i];
+                        $update_data1['is_loose_sale'] = !empty($data['selling_loose_quantity'.$i]) ? '1' : '0'; //$data['selling_loose_quantity'.$i];
 
-						$update_data1['quantity'] = $data['quantity'.$i];
-						$update_data1['amount'] = $data['amount'.$i];
+                        $update_data1['quantity'] = $data['quantity'.$i];
+                        $update_data1['amount'] = $data['amount'.$i];
 
-						if (!empty($update_data1['is_loose_sale'])) {
+                        if (!empty($update_data1['is_loose_sale'])) {
            $med_stock_details = $this->pharmacist_model->get_medicine_stock_details($insert_med_details[$i]['medicine_id']);
            if (!empty($med_stock_details[0]['loose_item_quantity']) && !empty($med_stock_details[0]['is_loose_item'])) {
                $update_data1['quantity'] = number_format($update_data1['quantity']/$med_stock_details[0]['loose_item_quantity'], 1);
@@ -305,11 +319,11 @@ for($i=1;$i<=15;$i++)
        if (!empty($update_data1['medicine_id'])) {
            $this->_check_medicines_stock($update_data1['medicine_id']);
        }
-		 $this->pharmacist_model->update_med_sold_to_patient($update_data1);
+         $this->pharmacist_model->update_med_sold_to_patient($update_data1);
 
 
-			}
-		}
+            }
+        }
 }
             $result['error']   = false;
 }else {
@@ -324,143 +338,143 @@ for($i=1;$i<=15;$i++)
 
 }
 
-	/***MANAGE PRESCRIPTIONS******/
+    /***MANAGE PRESCRIPTIONS******/
 
-	function manage_prescription($param1 = '', $param2 = '', $param3 = '')
-	{
-		$this->load->helper('util');
-        
+    function manage_prescription($param1 = '', $param2 = '', $param3 = '')
+    {
+        $this->load->helper('util');
 
-		if ($param1 == 'create') {	
-            
-			$this->session->set_flashdata('flash_message', get_phrase('prescription_created'));
-			redirect(base_url() . 'index.php?pharmacist/manage_prescription', 'refresh');
 
-		}
+        if ($param1 == 'create') {	
 
-		if ($param1 == 'edit' && $param2 == 'do_update') {
+            $this->session->set_flashdata('flash_message', get_phrase('prescription_created'));
+            redirect(base_url() . 'index.php?pharmacist/manage_prescription', 'refresh');
 
-			$data['medication_from_pharmacist'] = $this->input->post('medication_from_pharmacist');
+        }
 
-			$this->db->where('prescription_id', $param3);
+        if ($param1 == 'edit' && $param2 == 'do_update') {
 
-			$this->db->update('prescription', $data);
+            $data['medication_from_pharmacist'] = $this->input->post('medication_from_pharmacist');
 
-			$this->session->set_flashdata('flash_message', get_phrase('prescription_updated'));
+            $this->db->where('prescription_id', $param3);
 
-			redirect(base_url() . 'index.php?pharmacist/manage_prescription', 'refresh');
+            $this->db->update('prescription', $data);
 
-			
+            $this->session->set_flashdata('flash_message', get_phrase('prescription_updated'));
 
-		} else if ($param1 == 'edit') {
+            redirect(base_url() . 'index.php?pharmacist/manage_prescription', 'refresh');
 
-			$page_data['edit_profile'] = $this->db->get_where('medicine_sale', array(
 
-				'id' => $param2
 
-			))->result_array();
-		}
+        } else if ($param1 == 'edit') {
 
-		if ($param1 == 'delete' && !empty($param2)) {
-			$this->pharmacist_model->delete_med_sold_to_patient($param2);
-			$this->session->set_flashdata('flash_message', get_phrase('prescription_deleted'));
-			redirect(base_url() . 'index.php?pharmacist/manage_prescription', 'refresh');
-		}
+            $page_data['edit_profile'] = $this->db->get_where('medicine_sale', array(
 
-		$page_data['page_name']     = 'manage_prescription';
+                'id' => $param2
 
-		$page_data['page_title']    = 'Sold Medicine';
-		$page_data['prescriptions'] = $this->pharmacist_model->get_sold_medicine_details();
+            ))->result_array();
+        }
 
-		$this->load->view('index', $page_data);
+        if ($param1 == 'delete' && !empty($param2)) {
+            $this->pharmacist_model->delete_med_sold_to_patient($param2);
+            $this->session->set_flashdata('flash_message', get_phrase('prescription_deleted'));
+            redirect(base_url() . 'index.php?pharmacist/manage_prescription', 'refresh');
+        }
 
-	}
+        $page_data['page_name']     = 'manage_prescription';
 
-	
+        $page_data['page_title']    = 'Sold Medicine';
+        $page_data['prescriptions'] = $this->pharmacist_model->get_sold_medicine_details();
 
-	/******MANAGE OWN PROFILE AND CHANGE PASSWORD***/
+        $this->load->view('index', $page_data);
 
-	function manage_profile($param1 = '', $param2 = '', $param3 = '')
+    }
 
-	{
 
-		if ($this->session->userdata('pharmacist_login') != 1)
 
-			redirect(base_url() . 'index.php?login', 'refresh');
+    /******MANAGE OWN PROFILE AND CHANGE PASSWORD***/
 
-		if ($param1 == 'update_profile_info') {
+    function manage_profile($param1 = '', $param2 = '', $param3 = '')
 
-			$data['name']    = $this->input->post('name');
+    {
 
-			$data['email']   = $this->input->post('email');
+        if ($this->session->userdata('pharmacist_login') != 1)
 
-			$data['address'] = $this->input->post('address');
+            redirect(base_url() . 'index.php?login', 'refresh');
 
-			$data['phone']   = $this->input->post('phone');
+        if ($param1 == 'update_profile_info') {
 
-			
+            $data['name']    = $this->input->post('name');
 
-			$this->db->where('pharmacist_id', $this->session->userdata('pharmacist_id'));
+            $data['email']   = $this->input->post('email');
 
-			$this->db->update('pharmacist', $data);
+            $data['address'] = $this->input->post('address');
 
-			$this->session->set_flashdata('flash_message', get_phrase('profile_updated'));
+            $data['phone']   = $this->input->post('phone');
 
-			redirect(base_url() . 'index.php?pharmacist/manage_profile/', 'refresh');
 
-		}
 
-		if ($param1 == 'change_password') {
+            $this->db->where('pharmacist_id', $this->session->userdata('pharmacist_id'));
 
-			$data['password']             = $this->input->post('password');
+            $this->db->update('pharmacist', $data);
 
-			$data['new_password']         = $this->input->post('new_password');
+            $this->session->set_flashdata('flash_message', get_phrase('profile_updated'));
 
-			$data['confirm_new_password'] = $this->input->post('confirm_new_password');
+            redirect(base_url() . 'index.php?pharmacist/manage_profile/', 'refresh');
 
-			
+        }
 
-			$current_password = $this->db->get_where('pharmacist', array(
+        if ($param1 == 'change_password') {
 
-				'pharmacist_id' => $this->session->userdata('pharmacist_id')
+            $data['password']             = $this->input->post('password');
 
-			))->row()->password;
+            $data['new_password']         = $this->input->post('new_password');
 
-			if ($current_password == $data['password'] && $data['new_password'] == $data['confirm_new_password']) {
+            $data['confirm_new_password'] = $this->input->post('confirm_new_password');
 
-				$this->db->where('pharmacist_id', $this->session->userdata('pharmacist_id'));
 
-				$this->db->update('pharmacist', array(
 
-					'password' => $data['new_password']
+            $current_password = $this->db->get_where('pharmacist', array(
 
-				));
+                'pharmacist_id' => $this->session->userdata('pharmacist_id')
 
-				$this->session->set_flashdata('flash_message', get_phrase('password_updated'));
+            ))->row()->password;
 
-			} else {
+            if ($current_password == $data['password'] && $data['new_password'] == $data['confirm_new_password']) {
 
-				$this->session->set_flashdata('flash_message', get_phrase('password_mismatch'));
+                $this->db->where('pharmacist_id', $this->session->userdata('pharmacist_id'));
 
-			}
+                $this->db->update('pharmacist', array(
 
-			redirect(base_url() . 'index.php?pharmacist/manage_profile/', 'refresh');
+                    'password' => $data['new_password']
 
-		}
+                ));
 
-		$page_data['page_name']    = 'manage_profile';
+                $this->session->set_flashdata('flash_message', get_phrase('password_updated'));
 
-		$page_data['page_title']   = get_phrase('manage_profile');
+            } else {
 
-		$page_data['edit_profile'] = $this->db->get_where('pharmacist', array(
+                $this->session->set_flashdata('flash_message', get_phrase('password_mismatch'));
 
-			'pharmacist_id' => $this->session->userdata('pharmacist_id')
+            }
 
-		))->result_array();
+            redirect(base_url() . 'index.php?pharmacist/manage_profile/', 'refresh');
 
-		$this->load->view('index', $page_data);
+        }
 
-	}
+        $page_data['page_name']    = 'manage_profile';
+
+        $page_data['page_title']   = get_phrase('manage_profile');
+
+        $page_data['edit_profile'] = $this->db->get_where('pharmacist', array(
+
+            'pharmacist_id' => $this->session->userdata('pharmacist_id')
+
+        ))->result_array();
+
+        $this->load->view('index', $page_data);
+
+    }
 
     public function sold_to_patient()
     {
@@ -475,13 +489,13 @@ for($i=1;$i<=15;$i++)
             $insert_data['discount']            = $this->input->post('discount');
             $insert_data['medicine_sold_date']  = $this->input->post('selling_date');
             $insert_data['medicine_sold_date']  = Util::snh_date_format($insert_data['medicine_sold_date']);
-            
+
             $last_insert_id                     = $this->pharmacist_model->med_sold_to_patient($insert_data);
             // update the cash memo no in databse
             $cash_memo_prefix                   = $this->config->item('cash_memo_no_prefix');
             $cash_memo_no                       = $cash_memo_prefix . $last_insert_id;
             $this->pharmacist_model->update_medicine_sale_cash_memo_no($last_insert_id, $cash_memo_no);
-            
+
             $total_medicine_count               = $data['total_med_details'];
 
             $insert_med_details                 = array();
@@ -524,7 +538,7 @@ for($i=1;$i<=15;$i++)
             array( 'sucesss' => 1, 'content' => $result)
         ));
     }
-    
+
     private function _check_medicine_stock($data)
     {
         $medicine_list       = array();
@@ -535,11 +549,11 @@ for($i=1;$i<=15;$i++)
                 $medicine_list[]                                      = $medicine_id;
                 $medicine_other_list[$medicine_id]['total_stock']     = 0;
                 $medicine_other_list[$medicine_id]['sold_stock']      = 0;
-                
+
                 if (isset($data['selling_loose_quantity' . $i])) {
                     $medicine_other_list[$medicine_id]['loose_item'] = true;
                 } 
-                
+
                 $medicine_other_list[$medicine_id]['going_to_sell'] = $data['quantity' . $i];
             }
         }
@@ -557,7 +571,7 @@ for($i=1;$i<=15;$i++)
                 }
             }
         }
-        
+
         $sold_stock   = $this->pharmacist_model->get_sold_stock_of_medicine($medicine_list);
         if (is_array($sold_stock) && count($sold_stock) > 0) {
             foreach ($sold_stock as $rem_stock) {
@@ -578,25 +592,25 @@ for($i=1;$i<=15;$i++)
                 }
             }
         }
-        
+
         return $error_message;
-        
+
     }
-    
-	private function _check_medicines_stock($medicine_id)
-	{
+
+    private function _check_medicines_stock($medicine_id)
+    {
         $this->load->model('jobs_model');
         $purchased_stock = $this->jobs_model->get_medicines_purchased_stock($medicine_id);
         $sold_stock = $this->jobs_model->get_medicines_sold_stock($medicine_id);
         $update_med_stock_status = array();
         $sold_stock_details = array();
-        
+
         if (is_array($sold_stock) && count($sold_stock) > 0) {
             foreach ($sold_stock as $row) {
                 $sold_stock_details[$row['medicine_id']] = $row['quantity'];
             }
         }
-        
+
         if (is_array($purchased_stock) && count($purchased_stock) > 0) {
             foreach ($purchased_stock as $row) {
                 if ((!empty($sold_stock_details[$medicine_id]) 
@@ -607,56 +621,56 @@ for($i=1;$i<=15;$i++)
                 }
             }
         }
-        
+
         if (is_array($update_med_stock_status) && count($update_med_stock_status) > 0) {
             $this->jobs_model->update_medicine_stock_status($update_med_stock_status, $medicine_id);
         }
     }
-    
+
     public function vendors_list()
     {
-		$page_data['page_name']    = 'manage_vendors';
-		$page_data['page_title']   = get_phrase('manage_vendors');
+        $page_data['page_name']    = 'manage_vendors';
+        $page_data['page_title']   = get_phrase('manage_vendors');
         $page_data['vendors_list'] = $this->pharmacist_model->get_vendors_list();
-        
-		$this->load->view('index', $page_data);
+
+        $this->load->view('index', $page_data);
     }
-    
+
     public function edit_vendors_details($id)
     {
-		$page_data['page_name']    = 'manage_vendors';
-		$page_data['page_title']   = get_phrase('manage_vendors');
+        $page_data['page_name']    = 'manage_vendors';
+        $page_data['page_title']   = get_phrase('manage_vendors');
         $page_data['edit_profile'] = true;
         $data                      = $this->pharmacist_model->get_vendors_list($id);
         $page_data['edit_vendors_list'] = !empty($data[0]) ? $data[0] : null;
         $page_data['vendors_list'] = $this->pharmacist_model->get_vendors_list();
-		$this->load->view('index', $page_data);
+        $this->load->view('index', $page_data);
     }
-    
+
     public function add_vendor()
     {
             $data = $this->input->post();
             $insert_data = array();
-			$insert_data['name']   = $this->input->post('name');
-			$insert_data['description']   = $this->input->post('description');
+            $insert_data['name']   = $this->input->post('name');
+            $insert_data['description']   = $this->input->post('description');
             $insert_data['status']       = $this->input->post('status');
-            
+
             $this->pharmacist_model->add_vendor($insert_data);
 
             $this->session->set_flashdata('flash_message', get_phrase('Saved_successfully'));
-			redirect(base_url() . 'index.php?pharmacist/vendors_list', 'refresh');
+            redirect(base_url() . 'index.php?pharmacist/vendors_list', 'refresh');
             $this->load->view('index', $page_data);
 
     }
-    
-    
+
+
     public function update_vendor($id)
     {
         $update_data                = array();
         $update_data['name']        = $this->input->post('name');
         $update_data['description'] = $this->input->post('description');
         $update_data['status']      = $this->input->post('status');
-        
+
         $this->pharmacist_model->update_vendor_details($id, $update_data);
         $this->session->set_flashdata('flash_message', get_phrase('vendoe_details_updated'));
         redirect(base_url() . 'index.php?pharmacist/vendors_list', 'refresh');
@@ -664,14 +678,14 @@ for($i=1;$i<=15;$i++)
         $page_data['edit_profile'] = $this->db->get_where('medicine_category', array(
             'medicine_category_id' => $param2
         ))->result_array();
-	
 
-		$page_data['page_name']           = 'vendors_list';
-		$page_data['page_title']          = 'Manage Vendors';
-		$page_data['medicine_categories'] = $this->db->get('medicine_category')->result_array();
-		$this->load->view('index', $page_data);
+
+        $page_data['page_name']           = 'vendors_list';
+        $page_data['page_title']          = 'Manage Vendors';
+        $page_data['medicine_categories'] = $this->db->get('medicine_category')->result_array();
+        $this->load->view('index', $page_data);
     }
-    
+
     public function delete_vendor($id)
     {
         $page_data['vendors_list'] = $this->pharmacist_model->delete_vendor($id);
@@ -679,62 +693,62 @@ for($i=1;$i<=15;$i++)
         redirect(base_url() . 'index.php?pharmacist/vendors_list', 'refresh');
         $this->load->view('index', $page_data);
     }
-    
-    
+
+
     public function get_manufacture_company_list()
     {
         $page_data['page_name']    = 'manage_company';
-		$page_data['page_title']   = get_phrase('manage_company');
+        $page_data['page_title']   = get_phrase('manage_company');
         $page_data['company_list'] = $this->pharmacist_model->get_manufacture_company_list();
-        
-		$this->load->view('index', $page_data);
+
+        $this->load->view('index', $page_data);
     }
-    
+
     public function edit_manufacture_company_details($id)
     {
-		$page_data['page_name']    = 'manage_company';
-		$page_data['page_title']   = get_phrase('manage_company');
+        $page_data['page_name']    = 'manage_company';
+        $page_data['page_title']   = get_phrase('manage_company');
         $page_data['edit_profile'] = true;
         $data                      = $this->pharmacist_model->get_manufacture_company_list($id);
         $page_data['edit_company_list'] = !empty($data[0]) ? $data[0] : null;
         $page_data['company_list'] = $this->pharmacist_model->get_vendors_list();
-		$this->load->view('index', $page_data);
+        $this->load->view('index', $page_data);
     }
-    
+
     public function add_manufacture_company()
     {
             $data = $this->input->post();
             $insert_data = array();
-			$insert_data['name']   = $this->input->post('name');
-			$insert_data['description']   = $this->input->post('description');
+            $insert_data['name']   = $this->input->post('name');
+            $insert_data['description']   = $this->input->post('description');
             $insert_data['status']       = $this->input->post('status');
-            
+
             $this->pharmacist_model->add_manufacture_company($insert_data);
 
             $this->session->set_flashdata('flash_message', get_phrase('Saved_successfully'));
-			redirect(base_url() . 'index.php?pharmacist/get_manufacture_company_list', 'refresh');
+            redirect(base_url() . 'index.php?pharmacist/get_manufacture_company_list', 'refresh');
             $this->load->view('index', $page_data);
 
     }
-    
-    
+
+
     public function update_manufacture_company($id)
     {
         $update_data                = array();
         $update_data['name']        = $this->input->post('name');
         $update_data['description'] = $this->input->post('description');
         $update_data['status']      = $this->input->post('status');
-        
+
         $this->pharmacist_model->update_manufacture_company($id, $update_data);
         $this->session->set_flashdata('flash_message', get_phrase('company_details_updated'));
         redirect(base_url() . 'index.php?pharmacist/get_manufacture_company_list', 'refresh');
 
-		$page_data['page_name']           = 'manage_company';
-		$page_data['page_title']          = get_phrase('manage_company');
+        $page_data['page_name']           = 'manage_company';
+        $page_data['page_title']          = get_phrase('manage_company');
         redirect(base_url() . 'index.php?pharmacist/get_manufacture_company_list', 'refresh');
         $this->load->view('index', $page_data);
     }
-    
+
     public function delete_manufacture_company($id)
     {
         $page_data['vendors_list'] = $this->pharmacist_model->delete_manufacture_company($id);
@@ -742,30 +756,30 @@ for($i=1;$i<=15;$i++)
         redirect(base_url() . 'index.php?pharmacist/get_manufacture_company_list', 'refresh');
         $this->load->view('index', $page_data);
     }
-    
+
     public function get_medicine_batch_list()
     {
         $medicine_id = $this->input->post('medicine_id');
         $data        = $this->pharmacist_model->get_medicine_batch_list($medicine_id);
-        
+
         $this->output->set_content_type('application/json');
         $this->output->set_output(json_encode(
             array( 'sucesss'=>1, 'content'=> $data)
         ));
     }
-    
+
     public function get_med_distributor_details()
     {
         $medicine_id              = $this->input->post('medicine_id');
         $data['manufacture_list'] = $this->pharmacist_model->get_med_manufacture_details($medicine_id);
         $data['vendor_list']      = $this->pharmacist_model->get_med_vendors_details($medicine_id);
-        
+
         $this->output->set_content_type('application/json');
         $this->output->set_output(json_encode(
             array( 'sucesss'=>1, 'content'=> $data)
         ));
     }
-    
+
     public function generate_medicine_bill()
     {
         $data             = array();
@@ -775,7 +789,7 @@ for($i=1;$i<=15;$i++)
             'medicine_sold_date', 'medicine_expiry_date', 'medicine_sale.discount'
         );
         $data['content']  = $this->pharmacist_model->get_sold_medicine_details($medicine_sale_id, $columns);
-        
+
         $template         = $this->load->view('pharmacist/medicine_bill', $data, true);
         $this->output->set_content_type('application/json');
         $this->output->set_output(json_encode(
@@ -783,19 +797,19 @@ for($i=1;$i<=15;$i++)
                   'content' => $template)
         ));
     }
-    
+
     public function vendor_stock_report()
     {
         $page_data['page_name']    = 'vendor_stock_report';
-		$page_data['page_title']   = get_phrase('vendor_stock_report');        
-		$this->load->view('index', $page_data);
+        $page_data['page_title']   = get_phrase('vendor_stock_report');        
+        $this->load->view('index', $page_data);
     }
-    
+
     public function vendor_stock_report_list()
     {
         $data       = array();
         $data_count = 0;
-        
+
         $vendor_id = $this->input->post('vendor_id');
         if (!empty($vendor_id)) {
             $pagination_data = $this->get_pagination_details();
@@ -804,7 +818,7 @@ for($i=1;$i<=15;$i++)
             // get the data
             $data = $this->pharmacist_model->vendor_stock_report($vendor_id, $pagination_data);
         }
-        
+
         $this->output->set_content_type('application/json');
         $this->output->set_output(json_encode(
             array(
@@ -815,7 +829,7 @@ for($i=1;$i<=15;$i++)
             )
         );
     }
-    
+
     /**
      * @method check_dupliate_medicine_sale
      * @desc This function checks the sale of medicine already done or not in last few minutes/hours
@@ -826,13 +840,13 @@ for($i=1;$i<=15;$i++)
         $result = array();
         $medicines_to_sale = array();
         $data = $this->input->post();
-        
+
         $total_med_details = $this->input->post('total_med_details');
         for ($i = 1; $i <= $total_med_details; $i++) {
             $medicines_to_sale[] = $data['medicine_id' . $i];
         }
-        
-        
+
+
         $medicine_details = $this->pharmacist_model->check_dupliate_medicine_sale();
         if (!empty($medicine_details) && count($medicine_details) > 0) {
             foreach ($medicine_details as $row) {
@@ -847,7 +861,7 @@ for($i=1;$i<=15;$i++)
                     }
             }
         }
-        
+
         $this->output->set_content_type('application/json');
         $this->output->set_output(json_encode(
             array(
@@ -857,26 +871,40 @@ for($i=1;$i<=15;$i++)
             )
         ));
     }
-    
+
     public function medicine_stock_report()
     {
         $page_data['page_name']    = 'medicine_stock_report';
-		$page_data['page_title']   = get_phrase('medicine_stock_report');        
-		$this->load->view('index', $page_data);
+        $page_data['page_title']   = get_phrase('medicine_stock_report');   
+
+        $this->load->view('index', $page_data);
     }
-    
+
+    public function get_med_report_config()
+    {
+        $this->load->config('reports/medicine_stock_report_listing_header');
+        $data['columns'] = $this->config->item('medicine_stock_report_listing_header', 'report_columns');
+        $this->output->set_content_type('application/json');
+        $this->output->set_output(json_encode(
+            array(
+                'sucesss' => 1, 
+                'content' => $data
+            )
+        ));
+    }
+
     public function medicine_stock_report_list()
     {
         $data            = array();
         $pagination_data = $this->get_pagination_details();
         $filters         = $this->input->post('filterOptions');
-     
+
         // get the count of all the medicines
         $data_count      = $this->pharmacist_model->get_total_medicine_count($filters);
-        
+
         if (!empty($data_count)) {
             // get the list of all medicines
-            $data            = $this->pharmacist_model->get_medicine_revenue(array(), $pagination_data);
+            $data            = $this->pharmacist_model->get_medicine_revenue(array(), $pagination_data, $filters);
             $sold_stock      = $this->pharmacist_model->get_sold_stock_of_medicine();
 
             $med_sold_stock  = array();
@@ -886,7 +914,7 @@ for($i=1;$i<=15;$i++)
                     $med_sold_stock[$value['medicine_id']][] = $value['revenue'];
                 }
             }
-            
+
             foreach ($data as $key => $row) {
                 $data[$key]['total_stock'] = $row['total_stock'] + $row['total_free_item_stock'];
                 if (!empty($med_sold_stock[$row['medicine_category_id']])) {
@@ -898,11 +926,11 @@ for($i=1;$i<=15;$i++)
                 }
             }
         }
-        
+
 //        $total_revenue   = $this->pharmacist_model->get_all_medicine_revenue();
 //        $data['total_revenue'] = !empty($total_revenue[0]['total_amount']) ? $total_revenue[0]['total_amount'] : 0;
-        
-		$this->output->set_content_type('application/json');
+
+        $this->output->set_content_type('application/json');
         $this->output->set_output(json_encode(
             array(
                 'sucesss'           => 1, 
@@ -913,5 +941,43 @@ for($i=1;$i<=15;$i++)
             )
         );
     }
-    
+
+    public function get_medicine_list_config()
+    {
+        $this->load->config('reports/medicine_listing_header');
+        $data['columns'] = $this->config->item('medicine_listing_header', 'report_columns');
+        $this->output->set_content_type('application/json');
+        $this->output->set_output(json_encode(
+            array(
+                'sucesss' => 1, 
+                'content' => $data
+            )
+        ));
+    }
+
+    public function get_medicine_listing()
+    {
+        $data            = array();
+        $pagination_data = $this->get_pagination_details();
+        $filters         = $this->input->post('filterOptions');
+
+        // get the count of all the medicines
+        $data_count      = $this->pharmacist_model->get_medicine_list_count($filters);
+
+        if (!empty($data_count)) {
+            // get the list of all medicines
+            $data = $this->pharmacist_model->get_medicine_list($pagination_data, $filters);
+        }    
+        $this->output->set_content_type('application/json');
+        $this->output->set_output(json_encode(
+            array(
+                'sucesss'           => 1, 
+                'data'              => $data,
+                'recordsTotal'      => $data_count,
+                'recordsFiltered'   => $data_count
+                )
+            )
+        );
+    }
+
 }

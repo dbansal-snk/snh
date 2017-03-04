@@ -74,7 +74,8 @@ class Pharmacist_model extends MY_Model
         }
     }
     
-    public function get_medicine_revenue($medicine_ids = array(), $pagination = array())
+
+    public function get_medicine_revenue($medicine_ids = array(), $pagination = array(), $filters)
 
     {
         $this->db->select(array($this->_medicine_category . '.name', $this->_medicine_stock . '.loose_item_quantity'));
@@ -86,12 +87,16 @@ class Pharmacist_model extends MY_Model
         if (is_array($medicine_ids) && count($medicine_ids) > 0) {
             $this->db->where_in($this->_medicine_stock . '.medicine_category_id', $medicine_ids);
         }
-
+        
+        $this->_get_medicine_report_filters($filters);
+        
         $this->db->group_by($this->_medicine_category . '.medicine_category_id');
         $this->db->limit($pagination['offset'], $pagination['start']);
 
         if (!empty($pagination['sort_name']) && !empty($pagination['sort_order'])) {
             $this->db->order_by($pagination['sort_name'], $pagination['sort_order']);
+        } else {
+            $this->db->order_by('name', 'ASC');
         }
         
         $data = $this->db->get($this->_medicine_category)->result_array();
@@ -222,11 +227,29 @@ class Pharmacist_model extends MY_Model
             $this->db->update($this->_table_manufacture_company, $data);
         }
     }
-
-    public function get_medicine_list()
+    
+    public function get_medicine_list_count($filters)
     {
         $this->db->select('IF(status = "IN_STOCK", "In Stock", IF(status = "OUT_STOCK", "Out of Stock", "Not in Stock")) as status', false);
         $this->db->select(array('name', 'description', 'medicine_category_id'));
+        $this->_get_medicine_report_filters($filters);
+        $query = $this->db->get($this->_medicine_category);
+        $result = $query->num_rows();
+        return $result;
+    }
+    
+    public function get_medicine_list($pagination, $filters)
+    {
+        $this->db->select('IF(status = "IN_STOCK", "In Stock", IF(status = "OUT_STOCK", "Out of Stock", "Not in Stock")) as status', false);
+        $this->db->select(array('name', 'description', 'medicine_category_id'));
+        
+        $this->db->limit($pagination['offset'], $pagination['start']);
+
+        if (!empty($pagination['sort_name']) && !empty($pagination['sort_order'])) {
+            $this->db->order_by($pagination['sort_name'], $pagination['sort_order']);
+        }
+        
+        $this->_get_medicine_report_filters($filters);
         $data = $this->db->get($this->_medicine_category)->result_array();
 
         return $data;
@@ -390,8 +413,11 @@ class Pharmacist_model extends MY_Model
     public function get_total_medicine_count($filters)
     {
         $this->db->select($this->_medicine_category . '.medicine_category_id');
-        $query = $this->db->get($this->_medicine_category);
+        $this->db->join($this->_medicine_stock, $this->_medicine_stock . '.medicine_category_id = ' . $this->_medicine_category . '.medicine_category_id', 'LEFT');
+        $this->_get_medicine_report_filters($filters);
         
+        $this->db->group_by($this->_medicine_category . '.medicine_category_id');
+        $query = $this->db->get($this->_medicine_category);
         $result = $query->num_rows();
         return $result;
     }
@@ -411,6 +437,14 @@ class Pharmacist_model extends MY_Model
             //put this at the end in if condition bracket
             $this->compileFilters();
             
+        }
+    }
+    
+    function delete_medicine($id)
+    {
+        if (!empty($id)) {
+            $this->db->where('medicine_category_id', $id);
+            $this->db->delete('medicine_category');
         }
     }
 }

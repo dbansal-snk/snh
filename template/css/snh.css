@@ -51,3 +51,48 @@
 	z-index: 9999;
 	background: url('../images/page-loader.gif') 50% 50% no-repeat ;
 }
+
+
+/* dbansal:CPSRV-5748 */
+.tableRowMenu {
+    position: absolute;
+    z-index: 3000;
+    padding: 10px;
+    opacity: 0.95;
+    border: 3px solid #E98230;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    border-radius: 8px;
+    -webkit-box-shadow: #666 0px 0px 4px;
+    -moz-box-shadow: #666 0px 0px 4px;
+    box-shadow: #666 0px 0px 4px;
+    background: #808184;
+    background: -webkit-gradient(linear, 0 0, 0 bottom, from(#666), to(#808184));
+    background: -webkit-linear-gradient(#666, #808184);
+    background: -moz-linear-gradient(#666, #808184);
+    background: -ms-linear-gradient(#666, #808184);
+    background: -o-linear-gradient(#666, #808184);
+    background: linear-gradient(#666, #808184);
+    -pie-background: linear-gradient(#666, #808184);
+    color: #fff;
+    font-size: 12px;
+    line-height: 20px;
+    top:0;
+    left:0;
+    display: inline-block;
+}
+.tableRowMenu a {
+    color:#fff;
+}
+.tableRowMenu a:link {
+    color:#fff;
+}
+.tableRowMenu a:visited {
+    color:#fff;
+}
+.tableRowMenu a:active {
+    color:#fff;
+}
+.tableRowMenu a:hover {
+    color:#fff;
+}

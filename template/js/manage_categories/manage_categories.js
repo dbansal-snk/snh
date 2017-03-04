@@ -1,14 +1,14 @@
 manage_category = function() {
     
     var addMedUrl = 'index.php?pharmacist/manage_medicine_category/create';
-    function addMedicine() {
-//        var formDetails = $('#add_medicine').serializeArray();
-var name = $('#add_medicine #name').val();
-var desc = $('#add_medicine #description').val();
+
+    function addMedicine()
+    {
+        var formDetails = $('#add_medicine').serializeArray();
         $.ajax({
             type: 'POST',
             url: addMedUrl,
-            data: {'name': name, 'descrption': desc, 'proxy_url':addMedUrl},
+            data: formDetails,
             success: function(response)
             {
                 if ('undefined' != typeof response.content.error && true == response.content.error) {
