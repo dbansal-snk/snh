@@ -5,8 +5,12 @@
 		$CI	=&	get_instance();
 		$CI->load->database();
         $CI->db->select('IF(is_loose_item = 1, mrp/loose_item_quantity, null ) as loose_item_mrp', false);
-        $CI->db->select(array('mrp', 'medicine_category_id', 'is_loose_item'));
+        $CI->db->select(array('mrp', 'medicine_category_id', 'is_loose_item', 'batch'));
         $CI->db->where('is_latest_stock', 1);
+        $CI->db->where('batch' . ' IS NOT NULL');
+        $CI->db->where('batch' . ' != ""');
+        $CI->db->group_by('medicine_category_id');
+        $CI->db->group_by('batch');
         $data = $CI->db->get('medicine_stock')->result_array();
         
         return $data;

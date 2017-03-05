@@ -240,95 +240,109 @@ class Pharmacist extends My_Controller
         $this->load->view('index', $page_data);
 
     }
-/***UPDATE Sell MEDICINE******/
-public function edit_sell($id)
-{
 
-
-   $page_data['page_name']    = 'update_sell';
-            $page_data['page_title']   = 'update sell';
-   $data                      = $page_data['edit_profile']=
-            $this->pharmacist_model->get_sell_medicine_details($id);
-
+    /***UPDATE Sell MEDICINE******/
+    public function edit_sell($id)
+    {
+        $page_data['page_name']   = 'update_sell';
+        $page_data['page_title']  = 'update sell';
+        $data                     = array();
+        
+        if (!empty($id)) {        
+            $data = $page_data['edit_profile'] = $this->pharmacist_model->get_sell_medicine_details($id);
+        }
+        
         $page_data['update_sell'] = !empty($data[0]) ? $data[0] : null;
-                                $this->load->view('index', $page_data);
+        $this->load->view('index', $page_data);
+    }
+    public function update()
+    {
+        //$mdid = $this->input->post('md_id');
+        $data = $this->input->post();
+        
+        if (!empty($data['mid'])) {
+            $check_med_remaining_stock     = $this->_check_medicine_stock($data);
+            if (empty($check_med_remaining_stock)){
+                $sold_med_list = $this->pharmacist_model->get_sell_medicine_details($data['mid'], array('medicine_id'));
+                $sold_med_ids  = array();
+                if (is_array($sold_med_list) && count($sold_med_list) > 0) {
+                    foreach ($sold_med_list as $med_list) {
+                        $sold_med_ids[] = $med_list['medicine_id'];
+                    }
+                }
 
-}
-public function update()
-{
-    //$mdid = $this->input->post('md_id');
-    $data = $this->input->post();
-    // 	print_r($data);
- // exit;
+                $update_data                        = array();
+                $update_data1                       = array();
+                $update_data['patient_name']        = $data['patient_name'];
+                $update_data['discount']            = $data['discount'];
+                $update_data['total_amount']        = $data['total_amount'];
+                $update_data['medicine_sold_date']  = date('Y-m-d H:i:s' ,strtotime($data['selling_date']));
+                // update the major details of the medicines
+                $this->pharmacist_model->update_sell_medicine($data['mid'], $update_data);
+                $total_med_details      = $data['total_med_details'];
+                
+                // get the details of those medicines which have been updated by the user
+                $updated_medicines_ids  = array();
+                
+                for ($i = 1; $i <= $total_med_details; $i++) {
+                    $updated_medicines_ids[] = $data['medicine_id' . $i];
+                }
 
-$check_med_remaining_stock     = $this->_check_medicine_stock($data);
-if(empty($check_med_remaining_stock)){
-            $update_data                = array();
-            $update_data1                = array();
-            $update_data['patient_name'] = $data['patient_name'];
-            $update_data['discount'] = $data['discount'];
-            $update_data['total_amount'] = $data['total_amount'];
-            $update_data['medicine_sold_date'] =date('Y-m-d H:i:s' ,strtotime($data['selling_date']));
-
-            $this->pharmacist_model->update_sell_medicine($data['mid'], $update_data);
-
-for($i=1;$i<=15;$i++)
-{
-        if(isset($data['md_id'.$i]) &&  $data['md_id'.$i]>0)
-        {
-
-            if($data['quantity' . $i]!="")
-            {
-                        $update_data1['medicine_id'] = $data['medicine_id' . $i];
-                        $update_data1['batch'] = $data['batch_id'.$i];
-                        $update_data1['is_loose_sale'] = !empty($data['selling_loose_quantity'.$i]) ? '1' : '0'; //$data['selling_loose_quantity'.$i];
-
-                        $update_data1['quantity'] = $data['quantity'.$i];
-                        $update_data1['amount'] = $data['amount'.$i];
-
-                            $this->pharmacist_model->update_sell_medicine_details($data['md_id'.$i], $update_data1);
-
+                // get the list of those medicines which have been deleted by the pharmacist
+                $deleted_medicines = array_diff($sold_med_ids, $updated_medicines_ids);
+                
+                // get the list of those medicines which have been updated by the pharmacist
+                $updated_medicines = array_intersect($sold_med_ids, $updated_medicines_ids);
+                
+                // get the list of those medicines which have been newly added by the pharmacist
+                $new_medicines = array_diff($updated_medicines_ids, $sold_med_ids);
+               
+                if (is_array($deleted_medicines) && count($deleted_medicines) > 0) {
+                    $this->pharmacist_model->delete_already_sold_medicines($deleted_medicines, $data['mid']);
+                }
+            
+                $update_med_list     = array();
+                $new_med_list        = array();
+                $new_med_counter     = 0;
+                $updated_med_counter = 0;
+                for ($i = 1; $i <= $total_med_details; $i++) {
+                    $medicine_id = $data['medicine_id' . $i];
+                    if (!empty($medicine_id) && in_array($medicine_id, $new_medicines)) {
+                        $new_med_list[$new_med_counter]['medicine_sale_id']   = $data['mid'];
+                        $new_med_list[$new_med_counter]['medicine_id']        = $medicine_id;
+                        $new_med_list[$new_med_counter]['is_loose_sale']      = !empty($data['selling_loose_quantity' . $i]) ? 1 : 0;
+                        $new_med_list[$new_med_counter]['quantity']           = $data['quantity' . $i];
+                        $new_med_list[$new_med_counter]['batch']              = $data['batch_id' . $i];
+                        $new_med_list[$new_med_counter]['amount']             = $data['amount' . $i];
+                        $new_med_counter++;
+                    } else if (!empty($medicine_id) && in_array($medicine_id, $updated_medicines)) {
+                        $update_med_list[$updated_med_counter]['id']                 = $data['md_id' .  $i];
+                        $update_med_list[$updated_med_counter]['medicine_sale_id']   = $data['mid'];
+                        $update_med_list[$updated_med_counter]['medicine_id']        = $medicine_id;
+                        $update_med_list[$updated_med_counter]['is_loose_sale']      = !empty($data['selling_loose_quantity' . $i]) ? 1 : 0;
+                        $update_med_list[$updated_med_counter]['quantity']           = $data['quantity' . $i];
+                        $update_med_list[$updated_med_counter]['batch']              = $data['batch_id' . $i];
+                        $update_med_list[$updated_med_counter]['amount']             = $data['amount' . $i];
+                        $updated_med_counter++;
+                    }
+                    
+                    if (is_array($new_med_list) && count($new_med_list) > 0) {
+                        $this->pharmacist_model->med_details_sold_to_patient($new_med_list);
+                    }
+                    
+                    if (is_array($update_med_list) && count($update_med_list) > 0) {
+                        $this->pharmacist_model->update_med_details_sold_to_patient($update_med_list, $data['mid']);
+                    }
+                }
+                
+                $result['error']   = false;
+            } else {
+                $result['error']   = true;
+                $result['message'] = $check_med_remaining_stock;
             }
-            else{
-
-                        $update_data1['is_deleted'] = 1;
-                        $this->pharmacist_model->update_sell_medicine_details($data['md_id'.$i], $update_data1);
-
-
-            }
-        }
-        else {
-            if($data['quantity' . $i]!="")
-            {
-                        $update_data1['medicine_sale_id'] = $data['mid'];
-                        $update_data1['medicine_id'] = $data['medicine_id' . $i];
-                        $update_data1['batch'] = $data['batch_id'.$i];
-                        $update_data1['is_loose_sale'] = !empty($data['selling_loose_quantity'.$i]) ? '1' : '0'; //$data['selling_loose_quantity'.$i];
-
-                        $update_data1['quantity'] = $data['quantity'.$i];
-                        $update_data1['amount'] = $data['amount'.$i];
-
-                        if (!empty($update_data1['is_loose_sale'])) {
-           $med_stock_details = $this->pharmacist_model->get_medicine_stock_details($insert_med_details[$i]['medicine_id']);
-           if (!empty($med_stock_details[0]['loose_item_quantity']) && !empty($med_stock_details[0]['is_loose_item'])) {
-               $update_data1['quantity'] = number_format($update_data1['quantity']/$med_stock_details[0]['loose_item_quantity'], 1);
-           }
-       }
-       $update_data1['amount'] = $data['amount' . $i];
-
-       if (!empty($update_data1['medicine_id'])) {
-           $this->_check_medicines_stock($update_data1['medicine_id']);
-       }
-         $this->pharmacist_model->update_med_sold_to_patient($update_data1);
-
-
-            }
-        }
-}
-            $result['error']   = false;
-}else {
+        } else {
             $result['error']   = true;
-            $result['message'] = $check_med_remaining_stock;
+            $result['message'] = 'Wrong medicine details are being updated.';
         }
 
         $this->output->set_content_type('application/json');
@@ -336,7 +350,7 @@ for($i=1;$i<=15;$i++)
             array( 'sucesss' => 1, 'content' => $result)
         ));
 
-}
+    }
 
     /***MANAGE PRESCRIPTIONS******/
 

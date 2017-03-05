@@ -49,7 +49,7 @@
         </div>
     </div>
 </div>
-
+<div class="loader" style="display: none;"></div>
 <script>
     
 $(document).ready(function() {
@@ -60,6 +60,12 @@ $(document).ready(function() {
         data['vendor_id'] = $(this).val();
         var url = 'index.php?pharmacist/vendor_stock_report_list'
         ReportTable.init('vendor_stock_report', url, data, columns);
+        
+        
+        var configUrl = 'index.php?pharmacist/get_med_report_config';
+        var listUrl   = 'index.php?pharmacist/medicine_stock_report_list';
+        var tableId   = 'medicine_stock_report';
+        ReportTable.getReportConfig(configUrl, listUrl, tableId);
     });   
 });
 </script>

@@ -39,6 +39,7 @@
         </div>
     </div>
 </div>
+<div class="loader" style="display: none;"></div>
 
 <script>
 $(document).ready( function () {

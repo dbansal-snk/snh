@@ -55,7 +55,10 @@ ReportTable = function() {
                 aoData.push({'name':"filterOptions", 'value': _filters });
             },
             columnDefs: _columnDefs,
-            order: _columnOrder
+            order: _columnOrder,
+            fnDrawCallback: function() {
+                $('.loader').hide();
+            }
         });
     }
     
@@ -63,6 +66,7 @@ ReportTable = function() {
     function applyFilter(tableId, data) {
         buildFilters(data.report_config.content.columns);
         $( "#apply_filter" ).click(function() {
+            $('.loader').show();
             get_filter_data();
             var table = $('#' + tableId).DataTable();
             table.ajax.reload();
@@ -138,6 +142,7 @@ ReportTable = function() {
     }
 
     function getReportConfig(configUrl, listUrl, tableId) {
+        $('.loader').show();
         var data = {};
         $.ajax({
             url: configUrl,
@@ -147,7 +152,7 @@ ReportTable = function() {
                 loadTableData(tableId, listUrl, data, data.columns);
             }
         });
-
+        
         return data;
     }
     

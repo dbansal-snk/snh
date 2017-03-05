@@ -11,10 +11,13 @@ medicine = function() {
     {
         var totalSellingMedCount = $("[id*='selling_med_detais']").length;
         var totalAmount          = 0;
+        var batch                = null;
+        
         for (var i = 1; i <= totalSellingMedCount; i++) {
             var medicine_id = $("#medicine_id" + i).val();
             if (medicine_id != '' && $.isNumeric(medicine_id) && medicine_id > 0) {
-                var mrp = medicine_price_details[medicine_id];
+                batch   = $('#batch_id' + i).val();
+                var mrp = medicine_price_details[batch + '__' + medicine_id];
                 // if the loose item is being sold
                 if ($('#selling_loose_quantity' + i).is(":checked") && loose_item_mrp[medicine_id] > 0) {
                     mrp = loose_item_mrp[medicine_id];
@@ -127,7 +130,8 @@ medicine = function() {
 
         $('<select>').attr({
             id: 'batch_id' + labelCount,
-            name: 'batch_id' + labelCount
+            name: 'batch_id' + labelCount,
+            onchange: 'medicine.calculate_med_price()'
         }).appendTo(bInnerDiv);
 
 
@@ -432,6 +436,8 @@ medicine = function() {
                             newOption.attr('value',value.batch).text(value.batch);
                             $('#batch_id' + medicineOrder).append(newOption);
                         });
+                        
+                        calculate_med_price();
                     }
                 }
             });

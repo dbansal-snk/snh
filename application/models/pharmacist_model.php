@@ -75,7 +75,7 @@ class Pharmacist_model extends MY_Model
     }
     
 
-    public function get_medicine_revenue($medicine_ids = array(), $pagination = array(), $filters)
+    public function get_medicine_revenue($medicine_ids = array(), $pagination = array(), $filters = array())
 
     {
         $this->db->select(array($this->_medicine_category . '.name', $this->_medicine_stock . '.loose_item_quantity'));
@@ -91,8 +91,10 @@ class Pharmacist_model extends MY_Model
         $this->_get_medicine_report_filters($filters);
         
         $this->db->group_by($this->_medicine_category . '.medicine_category_id');
-        $this->db->limit($pagination['offset'], $pagination['start']);
-
+        if (!empty($pagination)) {
+            $this->db->limit($pagination['offset'], $pagination['start']);
+        }
+        
         if (!empty($pagination['sort_name']) && !empty($pagination['sort_order'])) {
             $this->db->order_by($pagination['sort_name'], $pagination['sort_order']);
         } else {
@@ -307,11 +309,16 @@ class Pharmacist_model extends MY_Model
 
     public function get_sell_medicine_details($medicine_sale_id = null, $columns = array())
     {
-        $this->db->select('*');
+        if (is_array($columns) && count($columns) > 0) {
+            $this->db->select($columns);
+        } else {
+            $this->db->select('*');
+        }
+        
         $this->db->from($this->_medicine_sale);
         $this->db->join($this->_medicine_sale_details , $this->_medicine_sale.'.id ='.$this->_medicine_sale_details.'.medicine_sale_id');
-         $this->db->where($this->_medicine_sale . '.id', $medicine_sale_id);
-         $this->db->where($this->_medicine_sale_details.'.is_deleted','0');
+        $this->db->where($this->_medicine_sale . '.id', $medicine_sale_id);
+        $this->db->where($this->_medicine_sale_details.'.is_deleted','0');
         $data = $this->db->get()->result_array();
 
         return $data;
@@ -440,11 +447,26 @@ class Pharmacist_model extends MY_Model
         }
     }
     
-    function delete_medicine($id)
+    public function delete_medicine($id)
     {
         if (!empty($id)) {
             $this->db->where('medicine_category_id', $id);
             $this->db->delete('medicine_category');
         }
+    }
+    
+    public function delete_already_sold_medicines(array $medicine_ids, $med_sale_id)
+    {
+         if (is_array($medicine_ids) && count($medicine_ids) > 0 && !empty($med_sale_id)) {
+            $data = array('is_deleted' => 1);
+            $this->db->where('medicine_sale_id', $med_sale_id);
+            $this->db->where_in('medicine_id', $medicine_ids);
+            $this->db->update($this->_medicine_sale_details, $data);
+        }
+    }
+    
+    public function update_med_details_sold_to_patient($data, $med_sale_id)
+    {
+        $this->db->update_batch($this->_medicine_sale_details, $data, 'id');
     }
 }

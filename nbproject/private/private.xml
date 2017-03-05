@@ -3,14 +3,14 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/var/www/html/hms/application/controllers/pharmacist.php</file>
-            <file>file:/var/www/html/hms/application/views/index.php</file>
-            <file>file:/var/www/html/hms/application/views/page_info.php</file>
-            <file>file:/var/www/html/hms/application/models/pharmacist_model.php</file>
             <file>file:/var/www/html/hms/template/js/medicine.js</file>
-            <file>file:/var/www/html/hms/application/views/pharmacist/medicine_stock_report.php</file>
-            <file>file:/var/www/html/hms/application/config/database.php</file>
+            <file>file:/var/www/html/hms/application/controllers/pharmacist.php</file>
+            <file>file:/var/www/html/hms/system/database/DB_active_rec.php</file>
             <file>file:/var/www/html/hms/application/views/pharmacist/update_sell.php</file>
+            <file>file:/var/www/html/hms/application/views/pharmacist/manage_prescription.php</file>
+            <file>file:/var/www/html/hms/application/views/pharmacist/manage_medicine.php</file>
+            <file>file:/var/www/html/hms/application/models/pharmacist_model.php</file>
+            <file>file:/var/www/html/hms/application/helpers/util_helper.php</file>
         </group>
     </open-files>
 </project-private>
