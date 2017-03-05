@@ -117,7 +117,6 @@ class Pharmacist extends My_Controller
 
             $page_data['page_name']             = 'manage_medicine_category';
             $page_data['page_title']            = 'Manage Medicines';
-            $page_data['medicine_categories']   = $this->pharmacist_model->get_medicine_list();
             $this->load->view('index', $page_data);
         }
     }
