@@ -31,6 +31,9 @@
                         ?>
                     </select>
                 </div>
+                <div id="filter_containers">
+                    <button id="apply_filter">Apply Filter</button>
+                </div>
                 <table id="vendor_stock_report" class="display" cellspacing="0" width="100%"  class="dTable responsive">
                     <thead>
                         <tr>
@@ -53,19 +56,23 @@
 <script>
     
 $(document).ready(function() {
-    $('#vendor_stock_report').DataTable();
+//    $('#vendor_stock_report').DataTable();
     $("#vendor_listing").change(function() {
-        var data = {};
-        var columns = ['name', 'total_stock', 'free_item', 'loose_item_quantity', 'sold_quantity', 'price', 'revenue'];
-        data['vendor_id'] = $(this).val();
-        var url = 'index.php?pharmacist/vendor_stock_report_list'
-        ReportTable.init('vendor_stock_report', url, data, columns);
         
-        
-        var configUrl = 'index.php?pharmacist/get_med_report_config';
-        var listUrl   = 'index.php?pharmacist/medicine_stock_report_list';
-        var tableId   = 'medicine_stock_report';
-        ReportTable.getReportConfig(configUrl, listUrl, tableId);
+        var configUrl       = 'index.php?pharmacist/get_vendor_stock_report_config';
+        var listUrl         = 'index.php?pharmacist/vendor_stock_report_list';
+        var tableId         = 'vendor_stock_report';
+        var data            = {};
+        data['vendor_id']   = $(this).val();
+        ReportTable.getReportConfig(configUrl, listUrl, tableId, data);
+  
+//        var data = {};
+//        var columns = ['name', 'total_stock', 'free_item', 'loose_item_quantity', 'sold_quantity', 'price', 'revenue'];
+//        data['vendor_id'] = $(this).val();
+//        var url = 'index.php?pharmacist/vendor_stock_report_list'
+//        ReportTable.init('vendor_stock_report', url, data, columns);
+//        
+//        
     });   
 });
 </script>

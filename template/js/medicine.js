@@ -292,8 +292,13 @@ medicine = function() {
 
     function validate_medicine_sale_form() {
         $('.loader').show();
-        var totalSellingMedCount = $("[id*='selling_med_detais']").length;
         var erroMessage = '';
+        var patientName = $.trim($('#patient_name').val());
+        if ('' == patientName) {
+            erroMessage += 'Please type patient name.' + '\n';
+        }
+        var totalSellingMedCount = $("[id*='selling_med_detais']").length;
+        
 		for (var i = 1; i <= totalSellingMedCount; i++) {
             var selectedMedValue = $('#medicine_id' + i).val();
             var medQuantity      = $('#med_quantity' + i).val();
@@ -489,6 +494,10 @@ medicine = function() {
 	function validat_medicine_sale_form() {
 		var totalSellingMedCount = $("[id*='selling_med_detais']").length;
 		var erroMessage = '';
+        var patientName = $.trim($('#patient_name').val());
+        if ('' == patientName) {
+            erroMessage += 'Please type patient name.' + '\n';
+        }
 		for (var i = 1; i <= totalSellingMedCount; i++) {
 			var selectedMedValue = $('#medicine_id' + i).val();
 			if (selectedMedValue == 0) {

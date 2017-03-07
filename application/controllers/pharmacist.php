@@ -811,37 +811,7 @@ class Pharmacist extends My_Controller
         ));
     }
 
-    public function vendor_stock_report()
-    {
-        $page_data['page_name']    = 'vendor_stock_report';
-        $page_data['page_title']   = get_phrase('vendor_stock_report');        
-        $this->load->view('index', $page_data);
-    }
-
-    public function vendor_stock_report_list()
-    {
-        $data       = array();
-        $data_count = 0;
-
-        $vendor_id = $this->input->post('vendor_id');
-        if (!empty($vendor_id)) {
-            $pagination_data = $this->get_pagination_details();
-            // get the total count
-            $data_count = $this->pharmacist_model->vendor_stock_report_count($vendor_id);
-            // get the data
-            $data = $this->pharmacist_model->vendor_stock_report($vendor_id, $pagination_data);
-        }
-
-        $this->output->set_content_type('application/json');
-        $this->output->set_output(json_encode(
-            array(
-                'sucesss'           => 1, 
-                'data'              => $data,
-                'recordsTotal'      => $data_count,
-                'recordsFiltered'   => $data_count)
-            )
-        );
-    }
+    
 
     /**
      * @method check_dupliate_medicine_sale
@@ -992,5 +962,50 @@ class Pharmacist extends My_Controller
             )
         );
     }
+    
+    public function get_vendor_stock_report_config()
+    {
+        $this->load->config('reports/vendor_stock_report_listing_header');
+        $data['columns'] = $this->config->item('vendor_stock_report_listing_header', 'report_columns');
+        $this->output->set_content_type('application/json');
+        $this->output->set_output(json_encode(
+            array(
+                'sucesss' => 1, 
+                'content' => $data
+            )
+        ));
+    }
 
+    public function vendor_stock_report()
+    {
+        $page_data['page_name']    = 'vendor_stock_report';
+        $page_data['page_title']   = get_phrase('vendor_stock_report');        
+        $this->load->view('index', $page_data);
+    }
+
+    public function vendor_stock_report_list()
+    {
+        $data       = array();
+        $data_count = 0;
+
+        $vendor_id = $this->input->post('vendor_id');
+        if (!empty($vendor_id)) {
+            $filters         = $this->input->post('filterOptions');
+            $pagination_data = $this->get_pagination_details();
+            // get the total count
+            $data_count = $this->pharmacist_model->vendor_stock_report_count($vendor_id, $filters);
+            // get the data
+            $data = $this->pharmacist_model->vendor_stock_report($vendor_id, $pagination_data, $filters);
+        }
+
+        $this->output->set_content_type('application/json');
+        $this->output->set_output(json_encode(
+            array(
+                'sucesss'           => 1, 
+                'data'              => $data,
+                'recordsTotal'      => $data_count,
+                'recordsFiltered'   => $data_count)
+            )
+        );
+    }
 }

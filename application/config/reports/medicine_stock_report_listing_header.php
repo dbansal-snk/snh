@@ -2,7 +2,7 @@
 
 $config['report_columns']['medicine_stock_report_listing_header'] = array(
    'name' 				=> 	array(
-       'name'           => 'Name',
+       'name'           => 'Medicine',
         'isColumn' 	=> TRUE,
         'isFilter'	=>	TRUE
 	),

@@ -346,19 +346,23 @@ class Pharmacist_model extends MY_Model
         return $this->db->insert_id();
     }
      
-    public function vendor_stock_report($vendor_id, $pagination)
+    public function vendor_stock_report($vendor_id, $pagination, $filters)
     {
-        $this->db->select(array($this->_medicine_category . '.name', $this->_medicine_stock . '.price'));
-        $this->db->select('SUM(' . $this->_medicine_sale_details . '.quantity' . ') as sold_quantity');
-        $this->db->select('SUM(' . $this->_medicine_sale_details . '.amount' . ') as revenue');
+        $this->db->select(array($this->_medicine_category . '.name' ));
         $this->db->select('SUM(' . $this->_medicine_stock . '.quantity' . ') as total_stock');
         $this->db->select('SUM(' . $this->_medicine_stock . '.free_item' . ') as free_item');
         $this->db->select('IF(' . $this->_medicine_stock . '.is_latest_stock = 1, ' . $this->_medicine_stock . '.loose_item_quantity, 0 ' . ') as loose_item_quantity', false);
+        $this->db->select('SUM(' . $this->_medicine_sale_details . '.quantity' . ') as sold_quantity');
+        $this->db->select(array($this->_medicine_stock . '.price'));
+        $this->db->select('SUM(' . $this->_medicine_sale_details . '.amount' . ') as revenue');
         
         $this->db->join($this->_table_vendors, $this->_medicine_stock . '.vendor_id = ' . $this->_table_vendors . '.id', 'INNER');
         $this->db->join($this->_medicine_category, $this->_medicine_stock . '.medicine_category_id = ' . $this->_medicine_category . '.medicine_category_id', 'INNER');
         $this->db->join($this->_medicine_sale_details, $this->_medicine_stock . '.batch = ' . $this->_medicine_sale_details . '.batch', 'LEFT');
         $this->db->where($this->_table_vendors . '.id', $vendor_id);
+        
+        $this->_get_vendor_report_filters($filters);
+        
         $this->db->group_by($this->_medicine_stock . '.medicine_category_id');
         $this->db->limit($pagination['offset'], $pagination['start']);
 
@@ -371,7 +375,7 @@ class Pharmacist_model extends MY_Model
         return $data;
     }
     
-    public function vendor_stock_report_count($vendor_id)
+    public function vendor_stock_report_count($vendor_id, $filters)
     {
         $this->db->select($this->_medicine_category . '.name');
         $this->db->join($this->_table_vendors, $this->_medicine_stock . '.vendor_id = ' . $this->_table_vendors . '.id', 'INNER');
@@ -380,9 +384,28 @@ class Pharmacist_model extends MY_Model
         $this->db->where($this->_table_vendors . '.id', $vendor_id);
         $this->db->group_by($this->_medicine_stock . '.medicine_category_id');
        
+        $this->_get_vendor_report_filters($filters);
         $query = $this->db->get($this->_medicine_stock);
         $result = $query->num_rows();
         return $result;
+    }
+    
+    private function _get_vendor_report_filters($filters)
+    {
+        if (is_array($filters) && count($filters) > 0) {
+            foreach ($filters as $filter_array) {
+                $filter_obj             = new stdClass();
+                $filter_obj->colName    = $filter_array['fieldName'];
+                $filter_obj->operator   = $filter_array['operator'];
+                $filter_obj->colValue   = $filter_array['value'];
+                $filter_obj->colType    = $filter_array['type'];
+                $this->applyFilterExpression($filter_obj);
+            }
+            
+            //put this at the end in if condition bracket
+            $this->compileFilters();
+            
+        }
     }
     
     public function get_med_stock_list()

@@ -10,7 +10,7 @@ ReportTable = function() {
 
     }
     
-    function loadTableData(tableId, url, data, columns) {
+    function loadTableData(tableId, url, data, columns, additionalData) {
         dataTableId = $('#' + tableId);
 
         var cols = [];
@@ -20,12 +20,12 @@ ReportTable = function() {
         });
         
         applyFilter(tableId, data);
-        loadTable(url, cols, data);
+        loadTable(url, cols, data,additionalData);
     }
     
   
     
-    function loadTable(url, cols, data) {
+    function loadTable(url, cols, data, additionalData) {
         dataTableId.DataTable().destroy();
         _tableObj = dataTableId.DataTable( {
             bProcessing : true,
@@ -45,6 +45,7 @@ ReportTable = function() {
             scroller: {
                 loadingIndicator: true
             },
+            // this function is to be called before firing the query to fetch the data for the reports
             fnServerParams: function ( aoData ) {
                 if ('undefined' != typeof data && '' != data) {
                     $.each(data, function (value, key) {
@@ -53,6 +54,11 @@ ReportTable = function() {
                 }
                 
                 aoData.push({'name':"filterOptions", 'value': _filters });
+                if ('undefined' != typeof additionalData && '' != additionalData) {
+                    $.each(additionalData, function (key, value) {
+                        aoData.push({'name':key, 'value':value}); 
+                    });
+                }
             },
             columnDefs: _columnDefs,
             order: _columnOrder,
@@ -141,7 +147,7 @@ ReportTable = function() {
         return domEl;
     }
 
-    function getReportConfig(configUrl, listUrl, tableId) {
+    function getReportConfig(configUrl, listUrl, tableId, additionalData) {
         $('.loader').show();
         var data = {};
         $.ajax({
@@ -149,7 +155,7 @@ ReportTable = function() {
             success: function(response){
                 data.report_config = response;
                 data.columns       = getReportColumns(response.content.columns);
-                loadTableData(tableId, listUrl, data, data.columns);
+                loadTableData(tableId, listUrl, data, data.columns, additionalData);
             }
         });
         
@@ -205,8 +211,8 @@ ReportTable = function() {
         init: function() {
             
         },
-        getReportConfig: function(configUrl, listUrl, tableId) {
-            return getReportConfig(configUrl, listUrl, tableId);
+        getReportConfig: function(configUrl, listUrl, tableId, additionalData) {
+            return getReportConfig(configUrl, listUrl, tableId, additionalData);
         },
         loadTableData: function(tableId, url, data, columns) {
             loadTableData(tableId, url, data, columns);
