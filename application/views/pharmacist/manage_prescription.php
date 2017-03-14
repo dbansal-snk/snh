@@ -54,60 +54,15 @@
             <!----TABLE LISTING STARTS--->
 
             <div class="tab-pane box <?php if(!isset($edit_profile))echo 'active';?>" id="list">
-
-
-
+                
+                <div id="filter_containers">
+                    <button id="apply_filter">Apply Filter</button>
+                </div>
+                
                 <table id="sold_to_patient_list" class="display" cellspacing="0" width="100%"  class="dTable responsive">
-
                 	<thead>
-                		<tr>
-                    		<th><div><?php echo get_phrase('Patient');?></div></th>
-                    		<th><div><?php echo get_phrase('Medicine');?></div></th>
-                    		<th><div><?php echo get_phrase('quantity');?></div></th>
-                    		<th><div><?php echo get_phrase('total_amount');?></div></th>
-                            <th><div><?php echo get_phrase('selling_date');?></div></th>
-                            <th><div><?php echo get_phrase('options');?></div></th>
-						</tr>
+                		<tr></tr>
 					</thead>
-
-                    <tbody>
-
-                    	<?php $count = 1;foreach($prescriptions as $row):?>
-
-                        <tr>
-							<td class="cname"><?php echo $row['patient_name'];?></td>
-                            <td><?php echo $row['name']; ?></td>
-                            <td><?php echo $row['quantity'];?></td>
-                            <td><?php echo number_format($row['total_amount'], 2);?></td>
-                            <td><?php echo $row['medicine_sold_date'];?></td>
-							<td align="center">
-                            	<a href="<?php echo base_url();?>index.php?pharmacist/edit_sell/<?php echo $row['id'];?>"
-                                	rel="tooltip" data-placement="top" data-original-title="<?php echo get_phrase('edit');?>" class="btn btn-blue">
-                                		<i class="icon-wrench"></i>
-                                </a>
-
-                            	<a href="javascript:;"
-													data-delete = "<?php echo base_url();?>index.php?pharmacist/manage_prescription/delete/<?php echo $row['id'];?>"
-                                	rel="tooltip" data-placement="top" data-original-title="<?php echo get_phrase('delete');?>" class="btn btn-red delete">
-                                    <i class="icon-trash"></i>
-                                </a>
-                            	<!-- <a href="<?php echo base_url();?>index.php?pharmacist/manage_prescription/delete/<?php echo $row['id'];?>" onclick="return confirm('delete?')"
-                                	rel="tooltip" data-placement="top" data-original-title="<?php echo get_phrase('delete');?>" class="btn btn-red">
-                                    <i class="icon-trash"></i>
-                                </a> -->
-
-                                <a href="javascript: void(0);" onclick="medicine.generate_medicine_bill(<?php echo $row['id'];?>);"
-                                	rel="tooltip" data-placement="top" data-original-title="Print Bill" class="btn btn-blue">
-                                		Print Bill
-                                </a>
-        					</td>
-
-                        </tr>
-
-                        <?php endforeach;?>
-
-                    </tbody>
-
                 </table>
 
 			</div>
@@ -128,7 +83,23 @@
                         <div class="padded">
 
                             <div class="control-group">
-                                <label class="control-label"><?php echo get_phrase('Patient_Name');?></label>
+                                <label class="control-label">Doctor</label>
+                                <div class="controls">
+                                    <select name="doctor_name" id="doctor_name">
+                                        <option value="0">--Select Doctor--</option>
+                                        <?php
+                                        foreach($doctor_list as $row) {
+                                        ?>
+                                            <option value="<?php echo $row['doctor_id'];?>"><?php echo $row['name'];?></option>
+                                        <?php
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="control-group">
+                                <label class="control-label">Patient Name</label>
                                 <div class="controls">
                                     <input type="text" id="patient_name" name="patient_name" class="validate[required]"/>
                                 </div>
@@ -257,26 +228,22 @@
     } ?>
 
 $(document).ready( function () {
-    $('#sold_to_patient_list').DataTable({
-        "scrollY":        "800px",
-        "scrollCollapse": true,
-        "paging":         false,
-        "columnDefs": [
-        { "width": "10%", "targets": 0 },
-        { "width": "20%", "targets": 1 }
-        ]
-    });
+    var configUrl       = 'index.php?pharmacist/get_medicine_sale_report_config';
+    var listUrl         = 'index.php?pharmacist/medicine_sale_report_list';
+    var tableId         = 'sold_to_patient_list';
+    ReportTable.getReportConfig(configUrl, listUrl, tableId);
 });
+
 $(".medicine_id").select2();
 $( "#save_prescribed_details" ).click(function() {
   medicine.validate_medicine_sale_form();
 });
 
- $( ".datepicker" ).datepicker({
-        changeYear: true,
-        changeMonth: true,
-        dateFormat: "dd-mm-yy"
-    });
+$( ".datepicker" ).datepicker({
+    changeYear: true,
+    changeMonth: true,
+    dateFormat: "dd-mm-yy"
+});
 
 // set the curent date in seeling_date field
 $("#selling_date").datepicker('setDate', new Date());
@@ -297,5 +264,43 @@ $("#selling_date").datepicker('setDate', new Date());
     });
 
 });
+
+$('body').delegate('#sold_to_patient_list tbody tr', 'click', function () {
+    var nTr             = this;
+    var currTd          = $(nTr);
+    var patientName     = $(this).children("td:first-child").find('a').html();
+    var url             = $(this).children("td:first-child").find('a').attr("href");
+    var saleId          = url.replace("index.php?pharmacist/edit_sell/","");
+    var actionHtml      = '';
+    var actionHtml      = "<span class='actionEdit'></span><a href ='" + url + "' style='font-weight:normal' >Edit '" + patientName + "'</a> <br />";
+    actionHtml         += "<span class='actionDelete'></span> <a href='#' onclick='deleteSaleDetails(" + '"' + saleId + '","' + patientName + '")' + "'); return false;'  style='font-weight:normal'>Delete '" + patientName + "' Details</a><br />";
+    actionHtml         += "<span class='actionDelete'></span> <a href='#' onclick='medicine.generate_medicine_bill("+ saleId +"); return false;'  style='font-weight:normal'>Print Bill</a>";    
+    TableRowMenu.showMenu(currTd,actionHtml);
+    $(nTr).append(TableRowMenu.getElement());
+});
+
+
+function deleteSaleDetails(saleId, patientName) {
+    var deleteLink = 'index.php?pharmacist/delete_patient_med_sale_details';
+    swal({
+        title: '',
+        text: "Are you sure want to Delete " + patientName + ' details?',
+        type: 'warning',
+        showCancelButton:true,
+        showConfirmButton:true,
+    }, function(){
+        $('.loader').show();
+        $.ajax({
+            type: 'POST',
+            url: deleteLink,
+            data: {id: saleId},
+            success: function() {
+                $('.loader').hide();
+                ReportTable.drawTable();
+            }
+        });
+    });
+}
+
 
 </script>

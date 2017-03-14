@@ -293,6 +293,11 @@ medicine = function() {
     function validate_medicine_sale_form() {
         $('.loader').show();
         var erroMessage = '';
+        var doctorName = $.trim($('#doctor_name').val());
+        if (0 == doctorName) {
+            erroMessage += "Please select doctor name." + '\n';
+        }
+        
         var patientName = $.trim($('#patient_name').val());
         if ('' == patientName) {
             erroMessage += 'Please type patient name.' + '\n';
@@ -494,6 +499,11 @@ medicine = function() {
 	function validat_medicine_sale_form() {
 		var totalSellingMedCount = $("[id*='selling_med_detais']").length;
 		var erroMessage = '';
+        var doctorName = $.trim($('#doctor_name').val());
+        if (0 == doctorName) {
+            erroMessage += "Please select doctor name." + '\n';
+        }
+        
         var patientName = $.trim($('#patient_name').val());
         if ('' == patientName) {
             erroMessage += 'Please type patient name.' + '\n';

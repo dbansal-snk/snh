@@ -22,17 +22,12 @@
             <div id="filter_containers">
                 <button id="apply_filter">Apply Filter</button>
             </div>
+            <div><span>Batch One Row</span><span><input type="checkbox" id="batch_row_med"></span></div>
             <div id="report">
                 <div style="margin-left: 400px;"><?php echo get_phrase('Total_Medicine_Revenue');?>: <?php echo !empty($all_med_revenue[0]['total_amount']) ? $all_med_revenue[0]['total_amount'] : 0; ?></div>
                 <table id="medicine_stock_report" class="display" cellspacing="0" width="100%"  class="dTable responsive">
                     <thead>
-                        <tr>
-                            <th><div><?php echo get_phrase('Medicine');?></div></th>
-                            <th><div>M.R.P</div></th>
-                            <th><div><?php echo get_phrase('Total_Stock');?></div></th>
-                            <th><div><?php echo get_phrase('Remaining_Stock');?></div></th>
-                            <th><div><?php echo get_phrase('Total_Revenue');?></div></th>
-                        </tr>
+                        <tr></tr>
                     </thead>
                 </table>
             </div>
@@ -43,10 +38,24 @@
 
 <script>
 $(document).ready( function () {
-    var configUrl = 'index.php?pharmacist/get_med_report_config';
-    var listUrl   = 'index.php?pharmacist/medicine_stock_report_list';
-    var tableId   = 'medicine_stock_report';
-    ReportTable.getReportConfig(configUrl, listUrl, tableId);
+    var configUrl       = 'index.php?pharmacist/get_med_report_config';
+    var listUrl         = 'index.php?pharmacist/medicine_stock_report_list';
+    var tableId         = 'medicine_stock_report';
+    var data  = {};
+    data['batch_row_med'] = 0;
+    if ($('#batch_row_med').is(':checked')) {
+        data['batch_row_med'] = 1;
+    }
+    ReportTable.getReportConfig(configUrl, listUrl, tableId, data);
   
-} );
+    $("#batch_row_med").click(function() {
+        if ($('#batch_row_med').is(':checked')) {
+            data['batch_row_med'] = 1;
+        } else {
+            data['batch_row_med'] = 0;
+        }
+        ReportTable.getReportConfig(configUrl, listUrl, tableId, data);
+    });
+
+});
 </script>

@@ -252,6 +252,7 @@ class Pharmacist extends My_Controller
         }
         
         $page_data['update_sell'] = !empty($data[0]) ? $data[0] : null;
+        $page_data['doctor_list'] = $this->pharmacist_model->get_doctors_list();
         $this->load->view('index', $page_data);
     }
     public function update()
@@ -275,6 +276,7 @@ class Pharmacist extends My_Controller
                 $update_data['patient_name']        = $data['patient_name'];
                 $update_data['discount']            = $data['discount'];
                 $update_data['total_amount']        = $data['total_amount'];
+                $update_data['doctor_id']           = $data['doctor_name'];
                 $update_data['medicine_sold_date']  = date('Y-m-d H:i:s' ,strtotime($data['selling_date']));
                 // update the major details of the medicines
                 $this->pharmacist_model->update_sell_medicine($data['mid'], $update_data);
@@ -351,54 +353,15 @@ class Pharmacist extends My_Controller
 
     }
 
-    /***MANAGE PRESCRIPTIONS******/
-
+   
     function manage_prescription($param1 = '', $param2 = '', $param3 = '')
     {
         $this->load->helper('util');
-
-
-        if ($param1 == 'create') {	
-
-            $this->session->set_flashdata('flash_message', get_phrase('prescription_created'));
-            redirect(base_url() . 'index.php?pharmacist/manage_prescription', 'refresh');
-
-        }
-
-        if ($param1 == 'edit' && $param2 == 'do_update') {
-
-            $data['medication_from_pharmacist'] = $this->input->post('medication_from_pharmacist');
-
-            $this->db->where('prescription_id', $param3);
-
-            $this->db->update('prescription', $data);
-
-            $this->session->set_flashdata('flash_message', get_phrase('prescription_updated'));
-
-            redirect(base_url() . 'index.php?pharmacist/manage_prescription', 'refresh');
-
-
-
-        } else if ($param1 == 'edit') {
-
-            $page_data['edit_profile'] = $this->db->get_where('medicine_sale', array(
-
-                'id' => $param2
-
-            ))->result_array();
-        }
-
-        if ($param1 == 'delete' && !empty($param2)) {
-            $this->pharmacist_model->delete_med_sold_to_patient($param2);
-            $this->session->set_flashdata('flash_message', get_phrase('prescription_deleted'));
-            redirect(base_url() . 'index.php?pharmacist/manage_prescription', 'refresh');
-        }
+        
 
         $page_data['page_name']     = 'manage_prescription';
-
         $page_data['page_title']    = 'Sold Medicine';
-        $page_data['prescriptions'] = $this->pharmacist_model->get_sold_medicine_details();
-
+        $page_data['doctor_list']   = $this->pharmacist_model->get_doctors_list();
         $this->load->view('index', $page_data);
 
     }
@@ -500,6 +463,7 @@ class Pharmacist extends My_Controller
             $insert_data['patient_name']        = $this->input->post('patient_name');
             $insert_data['total_amount']        = $this->input->post('total_amount');
             $insert_data['discount']            = $this->input->post('discount');
+            $insert_data['doctor_id']           = $this->input->post('doctor_name');
             $insert_data['medicine_sold_date']  = $this->input->post('selling_date');
             $insert_data['medicine_sold_date']  = Util::snh_date_format($insert_data['medicine_sold_date']);
 
@@ -881,31 +845,39 @@ class Pharmacist extends My_Controller
         $data            = array();
         $pagination_data = $this->get_pagination_details();
         $filters         = $this->input->post('filterOptions');
-
+        $batch_data      = $this->input->post('batch_row_med');
+        
         // get the count of all the medicines
-        $data_count      = $this->pharmacist_model->get_total_medicine_count($filters);
+        $data_count      = $this->pharmacist_model->get_total_medicine_count($filters, $batch_data);
 
         if (!empty($data_count)) {
             // get the list of all medicines
-            $data            = $this->pharmacist_model->get_medicine_revenue(array(), $pagination_data, $filters);
-            $sold_stock      = $this->pharmacist_model->get_sold_stock_of_medicine();
+            $data            = $this->pharmacist_model->get_medicine_revenue(array(), $pagination_data, $filters, $batch_data);
+            $medicine_ids    = array();
+            if (is_array($data) && count($data) > 0) {
+                foreach ($data as $row) {
+                    $medicine_ids[] = $row['medicine_category_id'];
+                }
+            }
+            
+            $sold_stock      = $this->pharmacist_model->get_sold_stock_of_medicine($medicine_ids, $batch_data, $filters);
 
             $med_sold_stock  = array();
             if (is_array($sold_stock) && count($sold_stock) > 0) {
                 foreach ($sold_stock as $value) {
-                    $med_sold_stock[$value['medicine_id']][] = $value['sold_stock'];
-                    $med_sold_stock[$value['medicine_id']][] = $value['revenue'];
+                    $med_sold_stock[$value['medicine_id']][$value['batch']][] = $value['sold_stock'];
+                    $med_sold_stock[$value['medicine_id']][$value['batch']][] = $value['revenue'];
                 }
             }
-
+            
             foreach ($data as $key => $row) {
                 $data[$key]['total_stock'] = $row['total_stock'] + $row['total_free_item_stock'];
-                if (!empty($med_sold_stock[$row['medicine_category_id']])) {
-                    $data[$key]['revenue']         = $med_sold_stock[$row['medicine_category_id']][1];
-                    $data[$key]['remaining_stock'] = $data[$key]['total_stock'] - $med_sold_stock[$row['medicine_category_id']][0];
+                if (!empty($med_sold_stock[$row['medicine_category_id']][$row['batch']])) {
+                    $data[$key]['revenue']         = $med_sold_stock[$row['medicine_category_id']][$row['batch']][1];
+                    $data[$key]['remaining_stock'] = $data[$key]['total_stock'] - $med_sold_stock[$row['medicine_category_id']][$row['batch']][0];
                 } else {
-                    $data[$key]['remaining_stock'] = $data[$key]['total_stock'];
                     $data[$key]['revenue']         = 0;
+                    $data[$key]['remaining_stock'] = $data[$key]['total_stock'];
                 }
             }
         }
@@ -1005,6 +977,55 @@ class Pharmacist extends My_Controller
                 'data'              => $data,
                 'recordsTotal'      => $data_count,
                 'recordsFiltered'   => $data_count)
+            )
+        );
+    }
+    
+    public function get_medicine_sale_report_config()
+    {
+        $this->load->config('reports/sale_medicine_listing_header');
+        $data['columns'] = $this->config->item('sale_medicine_listing_header', 'report_columns');
+        $this->output->set_content_type('application/json');
+        $this->output->set_output(json_encode(
+            array(
+                'sucesss' => 1, 
+                'content' => $data
+            )
+        ));
+    }
+
+    public function medicine_sale_report_list()
+    {
+        $data           = array();
+        $data_count     = 0;
+        
+        $filters         = $this->input->post('filterOptions');
+        $pagination_data = $this->get_pagination_details();
+        // get the total count
+        $data_count = $this->pharmacist_model->get_sold_medicine_details_count($filters);
+        // get the data
+        $data = $this->pharmacist_model->get_sold_medicine_details(null, array(), $pagination_data, $filters);
+
+        $this->output->set_content_type('application/json');
+        $this->output->set_output(json_encode(
+            array(
+                'sucesss'           => 1, 
+                'data'              => $data,
+                'recordsTotal'      => $data_count,
+                'recordsFiltered'   => $data_count)
+            )
+        );
+    }
+    
+    function delete_patient_med_sale_details()
+    {
+        $id = $this->input->post('id');
+        $this->pharmacist_model->delete_med_sold_to_patient($id);
+        $this->output->set_content_type('application/json');
+        $this->output->set_output(json_encode(
+            array(
+                'sucesss' => 1, 
+                )
             )
         );
     }

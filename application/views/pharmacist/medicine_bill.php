@@ -93,7 +93,7 @@
 </td>
     <td> <ul>
 	<li>Rx by Doctor:</li>
-    <li>Dr. A.K. Bansal</li>
+    <li>Dr. <?php echo !empty($content[0]['doctor_name']) ? ucfirst($content[0]['doctor_name']) : ''; ?></li>
 	</ul></td>
   </tr>
   

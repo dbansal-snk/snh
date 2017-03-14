@@ -47,6 +47,7 @@ ReportTable = function() {
             },
             // this function is to be called before firing the query to fetch the data for the reports
             fnServerParams: function ( aoData ) {
+                $('.loader').show();
                 if ('undefined' != typeof data && '' != data) {
                     $.each(data, function (value, key) {
                         aoData.push({'name':value, 'value': key });
@@ -75,11 +76,12 @@ ReportTable = function() {
             $('.loader').show();
             get_filter_data();
             var table = $('#' + tableId).DataTable();
-            table.ajax.reload();
+            reDrawDataTable();
         });
     }
     
     function buildFilters(columns) {
+        $(".allFiltersContainer").empty();
         var _customFilter = createDomEl("select",null,null, 'filter');
 
         // create columns filters drop down
@@ -165,6 +167,9 @@ ReportTable = function() {
     function getReportColumns(configData) {
         var columns     = [];
         var columnCount = 0;
+        // make the columns for the report
+        var reportColumn = $('table thead tr');
+        reportColumn.empty();
         $.each(configData, function (key, value) {
             // hide the column in the data table if it is not required
             if ('undefined' != typeof value.isColumn && false == value.isColumn) {
@@ -174,27 +179,35 @@ ReportTable = function() {
                 });
                 
                 
-            } else if ('undefined' != typeof value.isLink && true == value.isLink) {
-                // create the hyperlink in the datatable
-                _columnDefs.push({
-                    'targets' : columnCount, 
-                    'visible' : true,
-                    'render': function ( data, type, row, meta ) {
-                        if(type === 'display'){
-                            var id = value.additionDetails;
-                            data = '<a href="' + value.linkUrl + encodeURIComponent(row[id]) + '">' + data + '</a>';
-                            data += '<span class""></span>';
+            } else {
+                reportColumn.append('<th><div>' + value.name + '</div></th>');
+                if ('undefined' != typeof value.isLink && true == value.isLink) {
+                    // create the hyperlink in the datatable
+                    _columnDefs.push({
+                        'targets' : columnCount, 
+                        'visible' : true,
+                        'render': function ( data, type, row, meta ) {
+                            if(type === 'display'){
+                                var id = value.additionDetails;
+                                data = '<a href="' + value.linkUrl + encodeURIComponent(row[id]) + '">' + data + '</a>';
+                                data += '<span class""></span>';
+                            }
+                            return data;
                         }
-                        return data;
-                    }
-                });
+                    });
+                }
             }
-            
             // sort the column by default
             if ('undefined' != typeof value.defaultSort && true == value.defaultSort) {
                 _columnOrder.push([columnCount, value.defaultSortOrder]);   
             }
 
+            if ('undefined' != typeof value.isSortable && false == value.isSortable) {
+                _columnDefs.push({
+                    'targets'   : columnCount, 
+                    'orderable' : false
+                });
+            }
             columns.push(key);
             columnCount++;
         });

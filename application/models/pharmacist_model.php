@@ -10,6 +10,7 @@ class Pharmacist_model extends MY_Model
     private $_medicine_stock;
     private $_table_vendors;
     private $_table_manufacture_company;
+    private $_table_doctor;
     
     const STATUS_ACTIVE                 = 'ACTIVE';
     const DUPLICATE_RECORDS_TIME_SPAN   = 30;
@@ -23,9 +24,10 @@ class Pharmacist_model extends MY_Model
         $this->_medicine_stock              = 'medicine_stock';
         $this->_table_vendors               = 'vendors';
         $this->_table_manufacture_company   = 'manufacture_company';
+        $this->_table_doctor                = 'doctor';
 	}
 
-    public function get_sold_medicine_details($medicine_sale_id = null, $columns = array())
+    public function get_sold_medicine_details($medicine_sale_id = null, $columns = array(), $pagination = array(), $filters = array())
     {
         if (is_array($columns) && count($columns) > 0) {
             $this->db->select($columns);
@@ -33,13 +35,26 @@ class Pharmacist_model extends MY_Model
             $this->db->select('GROUP_CONCAT(' . $this->_medicine_category . '.name) as name');
             $this->db->select('GROUP_CONCAT(' . $this->_medicine_sale_details . '.quantity) as quantity');
             $this->db->select($this->_medicine_sale . '.*');
-             $this->db->where_in($this->_medicine_sale_details . '.is_deleted','0');
+            $this->db->where_in($this->_medicine_sale_details . '.is_deleted','0');
             $this->db->group_by($this->_medicine_sale_details . '.medicine_sale_id');
         }
+        
+        $this->db->select('doctor.name as doctor_name');
 
         $this->db->join($this->_medicine_sale_details, $this->_medicine_sale_details . '.medicine_sale_id = ' . $this->_medicine_sale . '.id', 'INNER');
-        $this->db->join($this->_medicine_category, $this->_medicine_category . '.medicine_category_id = ' . $this->_medicine_sale_details . ' .medicine_id', 'INNER');
+        $this->db->join($this->_medicine_category, $this->_medicine_category . '.medicine_category_id = ' . $this->_medicine_sale_details . ' .medicine_id', 'LEFT');
+        $this->db->join($this->_table_doctor, $this->_table_doctor . '.doctor_id = ' . $this->_medicine_sale . ' .doctor_id', 'LEFT');
 
+        $this->_get_medicine_sale_filters($filters);
+        
+        if (!empty($pagination)) {
+            $this->db->limit($pagination['offset'], $pagination['start']);
+        }
+        
+        if (!empty($pagination['sort_name']) && !empty($pagination['sort_order'])) {
+            $this->db->order_by($pagination['sort_name'], $pagination['sort_order']);
+        }
+        
         if (!empty($medicine_sale_id)) {
             $this->db->where($this->_medicine_sale . '.id', $medicine_sale_id);
             $this->db->join($this->_medicine_stock, $this->_medicine_stock . '.medicine_category_id = ' . $this->_medicine_sale_details . ' .medicine_id AND '
@@ -50,8 +65,39 @@ class Pharmacist_model extends MY_Model
 
         $this->db->order_by($this->_medicine_sale . '.create_date', 'DESC');
         $data = $this->db->get($this->_medicine_sale)->result_array();
-
+        
         return $data;
+    }
+    
+    public function get_sold_medicine_details_count($filters = array())
+    {
+        $this->db->select($this->_medicine_sale . '.id');
+        $this->db->join($this->_medicine_sale_details, $this->_medicine_sale_details . '.medicine_sale_id = ' . $this->_medicine_sale . ' .id', 'INNER');
+        $this->db->group_by($this->_medicine_sale . '.id');
+        $this->db->where('is_deleted', 0);
+        $this->_get_medicine_sale_filters($filters);
+        $query  = $this->db->get($this->_medicine_sale);
+        $result = $query->num_rows();
+        
+        return $result;
+    }
+    
+    private function _get_medicine_sale_filters($filters)
+    {
+        if (is_array($filters) && count($filters) > 0) {
+            foreach ($filters as $filter_array) {
+                $filter_obj             = new stdClass();
+                $filter_obj->colName    = $filter_array['fieldName'];
+                $filter_obj->operator   = $filter_array['operator'];
+                $filter_obj->colValue   = $filter_array['value'];
+                $filter_obj->colType    = $filter_array['type'];
+                $this->applyFilterExpression($filter_obj);
+            }
+            
+            //put this at the end in if condition bracket
+            $this->compileFilters();
+            
+        }
     }
 
     public function med_sold_to_patient($data)
@@ -75,15 +121,19 @@ class Pharmacist_model extends MY_Model
     }
     
 
-    public function get_medicine_revenue($medicine_ids = array(), $pagination = array(), $filters = array())
+    public function get_medicine_revenue($medicine_ids = array(), $pagination = array(), $filters = array(), $batch_data = false)
 
     {
         $this->db->select(array($this->_medicine_category . '.name', $this->_medicine_stock . '.loose_item_quantity'));
+        $this->db->select('GROUP_CONCAT( DISTINCT ' . $this->_medicine_stock . '.batch  ORDER BY batch ASC) as batch');
         $this->db->select('SUM(' . $this->_medicine_stock . '.quantity) as total_stock');
         $this->db->select('SUM(' . $this->_medicine_stock . '.free_item) as total_free_item_stock');
         $this->db->select(array($this->_medicine_category . '.medicine_category_id'));
         $this->db->select('IF(' . $this->_medicine_stock . '.is_latest_stock = 1, ' . $this->_medicine_stock . '.mrp, 0) as mrp', false);
+//        $this->db->select('SUM(' . $this->_medicine_stock . '.quantity) as sold_stock'); // this is a sold stock
+//        $this->db->select('SUM(amount) as revenue');
         $this->db->join($this->_medicine_stock, $this->_medicine_stock . '.medicine_category_id = ' . $this->_medicine_category . '.medicine_category_id', 'LEFT');
+//        $this->db->join($this->_medicine_sale_details, $this->_medicine_sale_details . '.medicine_id = ' . $this->_medicine_category . '.medicine_category_id', 'LEFT');
         if (is_array($medicine_ids) && count($medicine_ids) > 0) {
             $this->db->where_in($this->_medicine_stock . '.medicine_category_id', $medicine_ids);
         }
@@ -91,6 +141,11 @@ class Pharmacist_model extends MY_Model
         $this->_get_medicine_report_filters($filters);
         
         $this->db->group_by($this->_medicine_category . '.medicine_category_id');
+        
+        if (!empty($batch_data)) {
+            $this->db->group_by($this->_medicine_stock . '.batch');
+        }
+        
         if (!empty($pagination)) {
             $this->db->limit($pagination['offset'], $pagination['start']);
         }
@@ -102,24 +157,54 @@ class Pharmacist_model extends MY_Model
         }
         
         $data = $this->db->get($this->_medicine_category)->result_array();
-
         return $data;
     }
 
-    public function get_sold_stock_of_medicine($medicine_ids = array())
+    public function get_sold_stock_of_medicine($medicine_ids = array(), $batch_data = false, $filters = array())
     {
         $this->db->select('SUM(quantity) as sold_stock'); // this is a sold stock
         $this->db->select('SUM(amount) as revenue'); // this is a sold stock
         $this->db->select(array('medicine_id'));
+        $this->db->select('GROUP_CONCAT(distinct batch  ORDER BY batch ASC) as batch');
         if (is_array($medicine_ids) && count($medicine_ids) > 0) {
             $this->db->select($this->_medicine_category . '.name as name');
-            $this->db->join($this->_medicine_category, $this->_medicine_category . '.medicine_category_id = ' . $this->_medicine_sale_details . '.medicine_id', 'INNER');
+            $this->db->join($this->_medicine_sale_details, $this->_medicine_category . '.medicine_category_id = ' . $this->_medicine_sale_details . '.medicine_id', 'INNER');
             $this->db->where_in($this->_medicine_sale_details . '.medicine_id', $medicine_ids);
+        }
+        
+        $this->db->where('is_deleted', 0);
+        
+        if (is_array($filters) && count($filters) > 0) {
+            foreach ($filters as $filter_array) {
+                $filter_obj             = new stdClass();
+                $filter_obj->colName    = $filter_array['fieldName'];
+                $filter_obj->operator   = $filter_array['operator'];
+                $filter_obj->colValue   = $filter_array['value'];
+                $filter_obj->colType    = $filter_array['type'];
+                
+                switch ($filter_array['fieldName']) {
+                    case 'mrp' :
+                    case 'total_stock' :
+                        break;
+                    
+                    default:
+                        $this->applyFilterExpression($filter_obj);
+                }
+            }
+            
+            //put this at the end in if condition bracket
+            $this->compileFilters();
+            
         }
 
         $this->db->group_by($this->_medicine_sale_details . '.medicine_id');
-        $data = $this->db->get($this->_medicine_sale_details)->result_array();
-
+        
+        if (!empty($batch_data)) {
+            $this->db->group_by($this->_medicine_sale_details . '.batch');
+        }
+        
+        $data = $this->db->get($this->_medicine_category)->result_array();
+//        log_message('error', $this->db->last_query());
         return $data;
     }
 
@@ -184,11 +269,8 @@ class Pharmacist_model extends MY_Model
     public function delete_med_sold_to_patient($id)
     {
         if (!empty($id)) {
-            $this->db->where('id', $id);
-            $this->db->delete($this->_medicine_sale);
-
             $this->db->where('medicine_sale_id', $id);
-            $this->db->delete($this->_medicine_sale_details);
+            $this->db->update($this->_medicine_sale_details, array('is_deleted' => 1));
         }
     }
 
@@ -440,13 +522,16 @@ class Pharmacist_model extends MY_Model
         return $result;
     }
 
-    public function get_total_medicine_count($filters)
+    public function get_total_medicine_count($filters, $batch_data = false)
     {
         $this->db->select($this->_medicine_category . '.medicine_category_id');
         $this->db->join($this->_medicine_stock, $this->_medicine_stock . '.medicine_category_id = ' . $this->_medicine_category . '.medicine_category_id', 'LEFT');
         $this->_get_medicine_report_filters($filters);
         
         $this->db->group_by($this->_medicine_category . '.medicine_category_id');
+        if (!empty($batch_data)) {
+            $this->db->group_by($this->_medicine_stock . '.batch');
+        }
         $query = $this->db->get($this->_medicine_category);
         $result = $query->num_rows();
         return $result;
@@ -492,4 +577,72 @@ class Pharmacist_model extends MY_Model
     {
         $this->db->update_batch($this->_medicine_sale_details, $data, 'id');
     }
+    
+    public function get_doctors_list()
+    {
+        $this->db->select(array('name', 'doctor_id'));
+        $query = $this->db->get($this->_table_doctor);
+        $result = $query->result_array();
+        return $result;
+    }
+    
+//    public function get_medicine_stock_report($pagination, $filters, $batch_data= false)
+//    {
+//        $this->db->select(array($this->_medicine_category . '.name', $this->_medicine_stock . '.loose_item_quantity'));
+//        $this->db->select('GROUP_CONCAT( DISTINCT ' . $this->_medicine_stock . '.batch) as batch');
+//        $this->db->select('SUM(' . $this->_medicine_stock . '.quantity) as total_stock');
+//        $this->db->select('SUM(' . $this->_medicine_stock . '.free_item) as total_free_item_stock');
+//        $this->db->select(array($this->_medicine_category . '.medicine_category_id'));
+//        $this->db->select('IF(' . $this->_medicine_stock . '.is_latest_stock = 1, ' . $this->_medicine_stock . '.mrp, 0) as mrp', false);
+//        $this->db->select('null as sold_stock', false); // this is a sold stock
+//        $this->db->select('null as revenue', false);
+//        $this->db->from($this->_medicine_category);
+//        $this->db->join($this->_medicine_stock, $this->_medicine_stock . '.medicine_category_id = ' . $this->_medicine_category . '.medicine_category_id', 'LEFT');
+//        $this->db->group_by($this->_medicine_category . '.medicine_category_id');
+//        
+//        if (!empty($batch_data)) {
+//            $this->db->group_by($this->_medicine_stock . '.batch'); 
+//        }
+//        
+//        $query1 = $this->db->_compile_select();
+//        
+//        $this->db->_reset_select();
+//       
+//        $this->db->select(array($this->_medicine_category . '.name'));
+//        $this->db->select('null as loose_item_quantity', false);
+//        $this->db->select('null as batch', false);
+//        $this->db->select('null as total_stock', false);
+//        $this->db->select('null as  total_free_item_stock', false);
+//        $this->db->select('null as medicine_category_id', false);
+//        $this->db->select('null as mrp', false);
+//        $this->db->select('SUM(' . $this->_medicine_sale_details . '.quantity) as sold_stock'); // this is a sold stock
+//        $this->db->select('SUM(amount) as revenue');
+//
+//        $this->db->from($this->_medicine_category);
+//        $this->db->join($this->_medicine_sale_details, $this->_medicine_sale_details . '.medicine_id = ' . $this->_medicine_category . '.medicine_category_id', 'LEFT');
+//        $this->db->where('is_deleted', 0);
+//        $this->db->group_by($this->_medicine_category . '.medicine_category_id');
+//        
+//        $name_group_by = ' GROUP BY name';
+//        if (!empty($batch_data)) {
+//            $this->db->group_by($this->_medicine_sale_details . '.batch');
+//            $name_group_by .= ', batch';
+//        }
+//        
+//        $query2 = $this->db->_compile_select();
+//        $this->db->_reset_select();
+//        
+//        $sql =  "SELECT name, loose_item_quantity, batch, total_stock, total_free_item_stock, medicine_category_id, mrp, sum(sold_stock) as sold_stock, sum(revenue) as revenue
+//            FROM (".$query1." UNION ALL ".$query2.") tmp1" .
+//                $name_group_by
+//                . " ORDER BY " . $pagination['sort_name'] . " " . $pagination['sort_order'];
+//
+//        $sql .= ' LIMIT ' . $pagination['start'] . ',' . $pagination['offset'];
+//        $query = $this->db->query($sql);
+//
+//        $data = $query->result_array();
+//                log_message('error', $this->db->last_query());
+//
+//        return $data;
+//    }
 }

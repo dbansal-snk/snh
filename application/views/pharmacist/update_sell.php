@@ -23,7 +23,27 @@
             <div class="padded">
 
                 <div class="control-group">
-                    <label class="control-label"><?php echo get_phrase('Patient_Name');?></label>
+                    <label class="control-label">Doctor</label>
+                    <div class="controls">
+                        <select name="doctor_name" id="doctor_name">
+                            <option value="0">--Select Doctor--</option>
+                            <?php
+                            foreach($doctor_list as $row) {
+                                $selected = '';
+                                if (!empty($update_sell['doctor_id']) && $row['doctor_id'] == $update_sell['doctor_id']) {
+                                    $selected = 'selected';
+                                }
+                            ?>
+                                <option value="<?php echo $row['doctor_id'];?>" <?php echo $selected; ?>><?php echo $row['name'];?></option>
+                            <?php
+                            }
+                            ?>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <label class="control-label">Patient Name</label>
 
                     <div class="controls">
                         <input type="text" id="patient_name" class="validate[required]" name="patient_name" value="<?php echo !empty($edit_profile['0']['patient_name']) ? $edit_profile['0']['patient_name'] : ''; ?>"/>

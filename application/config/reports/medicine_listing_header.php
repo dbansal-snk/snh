@@ -13,13 +13,13 @@ $config['report_columns']['medicine_listing_header'] = array(
 	),
     
     'description' 		=> 	array(
-        'name'      => 'description',
+        'name'      => 'Description',
         'isColumn' 	=> TRUE,
         'isFilter'	=>	FALSE
 	),
     
     'status' 				=> 	array(
-        'name'      => 'status',
+        'name'      => 'Status',
         'isColumn' 	=> TRUE,
         'isFilter'	=>	FALSE
 	),
